@@ -1,0 +1,46 @@
+Lista de Exercícios Avaliativa 2 da Unidade 2 – Usando a linguagem de programação
+Python (versão 3.X)
+
+Professor: Galileu Batista
+
+1. Faça uma função que receba um número inteiro positivo e responda True se ele é primo e False, caso contrário. Usando esta, faça um programa que receba um número n e imprima os n primeiros números primos.
+
+10 - OK. Certinho.
+
+2. Faça uma função que aceite uma lista de inteiros e retorne True se todos os elementos forem ímpares ou se todos forem pares. Retorne False caso contrário.
+
+10 - OK;
+
+3. Faça uma função que aceite uma lista de inteiros e retorne uma lista de listas com os mesmos inteiros da lista original, de modo que a primeira dessas listas tenha 1 elemento, a segunda 2 e assim por diante. Ex: Para a lista [5, 6, 7, 23, 45, 43, 12, 1, 13, 90] deve ser retornado o seguinte [ [5], [6,7], [23, 45, 43], [12, 1, 13, 90] ].
+
+10 - OK;
+
+4. Uma sequência de números é piramidal se puder ser dividida em segmentos formados por um número, dois números, três números e assim por diante, desde que o último segmento tenha um número a mais do que o penúltimo. Além disso, todos os números em cada segmento devem ser pares ou ímpares, jamais misturados. Assim:
+
+12 3 7 2 10 4 5 13 5 11 é piramidal, pois pode ser dividido em segmentos
+12 3 7 2 10 4 5 13 5 11 e somente ímpares ou pares acontecem em cada segmento
+1 12 4 3 13 5 12 87 não é piramidal, pois o último tem só dois elementos.
+
+A saída do programa deve ser os segmentos, um em cada linha, e, ao final, se a
+sequência é piramidal ou não.
+
+20 - OK, usou as funções das questões anteriores;
+
+5. Desenvolva um programa de gerenciamento de MAC addresses associados a CPFs. O programa deve ter as seguintes opções:
+
+1. Cadastrar um CPF
+2. Remover um CPF
+3. Adicionar um MAC vinculado a um CPF
+4. Remover um MAC vinculado a um CPF
+5. Listar os CPFs cadastrados
+6. Listar os MAC vinculados a um CPF.
+7. Sair
+
+A interface com o usuário consiste de repetidamente pedir para executar uma das opções acima. Até que o usuário decida pela opção de sair.
+
+Os dados armazenados em uma sessão de trabalho devem estar disponíveis em outra. Ou seja, se o usuário fizer uma série de operações e sair do programa, quando ele executar novamente o programa, o resultado das ações anteriores deve estar disponível. Para tanto, na saída do programa armazene o resultado das operações em um arquivo. Na entrada do programa, leia o que foi armazenado no arquivo (caso tal arquivo não exista, apenas ignore e continue como se fosse vazio). Você não deve
+enviar o arquivo de dados.
+
+Uma dica: para armazenamento dos dados na memória é usar um dicionário cuja chave é o CPF e cujo valor associado a cada CPF é uma lista com os MACs. A gravação no arquivo deve ser em formato JSON, para simplificar o processo de leitura.
+
+50 - Correto, formataram os valores, parabens.

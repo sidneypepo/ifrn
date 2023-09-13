@@ -1,0 +1,4 @@
+Menor valor da ação: 20.77
+Preço médio de fechamento: 27.73772903187253
+Volume médio negociado: 77336543.42629482
+Dia com maior valor: 2022-10-21
