@@ -39,6 +39,7 @@ def main():
         return
 
     print("Arquivo salvo com sucesso!")
+    return
 
 if (__name__ == "__main__"):
     try:

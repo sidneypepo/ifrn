@@ -1,6 +1,6 @@
 #+title: README.org
 #+author: Sidney Pedro
-#+date: [2023-09-11 Mon]
+#+date: [2023-09-14 Thu]
 
 * Lista de exercícios 01 - Revisão
 1. Elaborar um programa que siga as seguintes especificações:
@@ -26,12 +26,12 @@
    - O programa deverá solicitar o nome do arquivo salvo na questão 1 dessa lista de exercícios.
      + Deverão ser tratadas as exceções que eventualmente possam surgir (atentem para caso o arquivo não exista).
 
-   - Uma vez que o nome do arquivo seja válido, deverá ser chamada uma função (para fins de padronização iremos nomear essa função como ler_arquivo). Essa função terá as seguintes especificações:
+   - Uma vez que o nome do arquivo seja válido, deverá ser chamada uma função (para fins de padronização iremos nomear essa função como ~ler_arquivo~). Essa função terá as seguintes especificações:
      + Ela irá receber 1 argumento: ~nome_arquivo~;
 
      + Ela irá retornar ao programa 2 valores. O primeiro será um valor booleano (~True~ ou ~False~) informando se o arquivo foi lido com sucesso ou não e o segundo valor será a lista gerada com base no arquivo lido. Caso o primeiro valor de retorno seja ~False~, o segundo valor de retorno deverá ser ~None~.
 
-   - Uma vez que já temos a lista lida do arquivo, deverá ser chamada uma função (para fins de padronização iremos nomear essa função como ordena_lista). Essa função terá as seguintes especificações:
+   - Uma vez que já temos a lista lida do arquivo, deverá ser chamada uma função (para fins de padronização iremos nomear essa função como ~ordena_lista~). Essa função terá as seguintes especificações:
      + Ela irá receber 2 argumentos: ~nome_lista~ e ~metodo_ordena~;
 
      + Ela irá retornar ao programa 2 valores. O primeiro será um valor booleano (~True~ ou ~False~) informando se a lista foi ordenada ou não e o segundo valor será a lista ordenada com base no método de ordenação informado no segundo argumento. Caso o primeiro valor de retorno seja ~False~, o segundo valor de retorno deverá ser ~None~;
@@ -76,7 +76,7 @@
 
    #+begin_src text
                        1                   2                   3
-      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     0 |                       Timestamp (Seconds)                     |
       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -108,7 +108,7 @@
 
    - Com quantos outros IPs o IP da interface capturada interagiu?
 
-4. Fazer um programa que efetue a leitura dos arquivos que estão contidos no arquivo ~serie_historica_anp.rar~[fn:1]  e realize as seguintes operações (descompacte o arquivo em um diretório/pasta chamado ~serie_historica_anp~):
+4. Fazer um programa que efetue a leitura dos arquivos que estão contidos no arquivo ~serie_historica_anp.rar~ [fn:1] e realize as seguintes operações (descompacte o arquivo em um diretório/pasta chamado ~serie_historica_anp~):
    - *NÃO* deverá ser utilizada a biblioteca /CSV/, /PANDAS/ ou similares;
 
    - O programa deverá reconhecer a inclusão de novos arquivos no diretório/pasta sem ser necessária a alteração no código fonte.
@@ -121,10 +121,10 @@
 
    - Com base na lista gerada no segundo item, deverão ser geradas as seguintes listas abaixo (cada lista deverá ser salva em formato de arquivo com o dados separados por ~;~ no diretório criado no primeiro item). O nome de cada arquivo está no início de cada tópico:
      + Nome do arquivo: ~media_bandeira.txt~
-       bandeira – produto – ano – valor_medio_venda – quantidade_postos
+       bandeira - produto - ano - valor_medio_venda - quantidade_postos
 
      + Nome do arquivo: ~media_produto_regiao.txt~
-       produto – região – ano – valor_medio – quantidade_postos
+       produto - região - ano - valor_medio - quantidade_postos
 
 5. Para realizar essa atividade será necessário efetuar o download do arquivo ~dados_cartola_fc.rar~ (disponível no Moodle).
 
@@ -135,7 +135,6 @@
 
    - Caso o arquivo tenha sido lido com sucesso, o deverá solicitar ao usuário um dos esquemas táticos conforme tabela a seguir:
      | Esquema |             Quantidade de jogadores              |
-     +---------+--------------------------------------------------+
      |  3-4-3  | 3 zagueiros / 0 laterais / 4 meias / 3 atacantes |
      |  3-5-2  | 3 zagueiros / 0 laterais / 5 meias / 2 atacantes |
      |  4-3-3  | 2 zagueiros / 2 laterais / 3 meias / 3 atacantes |

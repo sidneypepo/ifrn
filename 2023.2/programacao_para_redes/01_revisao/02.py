@@ -21,7 +21,30 @@
 import funcoes
 
 def main():
-    ...
+    nome_arquivo = funcoes.entrada_usuario("str", "Digite o nome do arquivo: ")
+
+    lista = funcoes.ler_arquivo(nome_arquivo)
+    if (lista[1] == None):
+        print("Erro: não foi possível ler o arquivo!")
+        return
+
+    metodos_ordenacao = ("BUBBLE", "INSERTION", "SELECTION", "QUICK")
+    metodo_ordena = ""
+    while (not metodo_ordena.upper() in metodos_ordenacao):
+        metodo_ordena = funcoes.entrada_usuario("str", "Digite o método de ordenação (bubble/insertion/selection/quick): ")
+        funcoes.mostrar_erro((metodo_ordena.upper() in metodos_ordenacao), "Erro: método inválido!\n")
+
+    lista_ordenada = funcoes.ordena_lista(lista[1], metodo_ordena)
+    if (lista_ordenada[1] == None):
+        print("Erro: não foi possível ordenar a lista!")
+        return
+
+    print("Lista ordenada com sucesso!\nResultado:", end=' ')
+    for item in range(len(lista_ordenada[1])):
+        print(lista_ordenada[1][item], end=' ')
+
+    print()
+    return
 
 if (__name__ == "__main__"):
     try:

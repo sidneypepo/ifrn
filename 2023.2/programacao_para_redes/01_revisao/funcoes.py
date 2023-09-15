@@ -20,7 +20,7 @@
 
 import os, random
 
-diretorio_atual = os.path.dirname(os.path.abspath(__file__))
+DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
 
 def ehnatural(numero: str):
     if (len(numero) < 1):
@@ -77,7 +77,7 @@ def entrada_usuario(tipo: str, mensagem: str):
             mostrar_erro(ehfloat(valor), "Erro: Digite um número fracionário!\n")
         valor = float(valor)
     elif (tipo.lower() == "str"):
-        while (len(valor) == 0):
+        while (not len(valor) > 0):
             valor = input(mensagem)
             mostrar_erro((len(valor) > 0), "Erro: Digite uma string válida!\n")
     else:
@@ -93,19 +93,132 @@ def gerar_lista(quantidade: int, valor_minimo: int = 1, valor_maximo: int = 1000
 
     lista = []
 
-    for item in range(quantidade):
+    for index in range(quantidade):
         lista.append(random.randint(valor_minimo, valor_maximo))
 
     return True, lista
 
 def salvar_lista(nome_lista: list, nome_arquivo: str = "valores_nao_ordenados.txt"):
     try:
-        arquivo = open(diretorio_atual + '/' + nome_arquivo, 'w')
+        arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'w')
     except:
         return False
 
-    for item in range(len(nome_lista)):
-        arquivo.write(f"{nome_lista[item]}\n")
+    for index in range(len(nome_lista)):
+        arquivo.write(f"{nome_lista[index]}\n")
 
     arquivo.close()
     return True
+
+def ler_arquivo(nome_arquivo: str):
+    try:
+        arquivo = open(nome_arquivo, 'r')
+    except:
+        return False, None
+
+    lista = []
+    for linha in arquivo:
+        if (not ehinteiro(linha[:-1])):
+            return False, None
+        lista.append(int(linha[:-1]))
+
+    arquivo.close()
+    return True, lista
+
+def ordena_bubble(nome_lista: list):
+    if (len(nome_lista) == 0):
+        return False, None
+    elif (len(nome_lista) == 1):
+        return True, nome_lista
+
+    invercao = False
+
+    for index in range(len(nome_lista) - 1):
+        if (nome_lista[index] > nome_lista[index + 1]):
+            invercao = True
+            nome_lista[index], nome_lista[index + 1] = nome_lista[index + 1], nome_lista[index]
+
+    if (invercao):
+        ordena_bubble(nome_lista)
+
+    return True, nome_lista
+
+def ordena_insertion(nome_lista: list):
+    if (len(nome_lista) == 0):
+        return False, None
+    elif (len(nome_lista) == 1):
+        return True, nome_lista
+
+    for index in range(1, len(nome_lista)):
+        valor_temp = nome_lista[index]
+
+        novo_index = index
+        while (novo_index > 0 and valor_temp < nome_lista[novo_index - 1]):
+            nome_lista[novo_index] = nome_lista[novo_index - 1]
+            novo_index -= 1
+
+        nome_lista[novo_index] = valor_temp
+
+    return True, nome_lista
+
+def ordena_selection(nome_lista: list):
+    if (len(nome_lista) == 0):
+        return False, None
+    elif (len(nome_lista) == 1):
+        return True, nome_lista
+
+    for index in range(len(nome_lista)):
+        index_temp = index
+
+        for outro_index in range(index + 1, len(nome_lista)):
+            if (nome_lista[outro_index] < nome_lista[index_temp]):
+                index_temp = outro_index
+
+        nome_lista[index], nome_lista[index_temp] = nome_lista[index_temp], nome_lista[index]
+
+    return True, nome_lista
+
+def particionar(nome_lista: list, index_inicio: int, index_fim: int):
+    valor_pivo = nome_lista[index_fim]
+    index_pivo = index_inicio
+
+    for index in range(index_inicio, index_fim):
+        if (nome_lista[index] <= valor_pivo):
+            nome_lista[index_pivo], nome_lista[index] = nome_lista[index], nome_lista[index_pivo]
+            index_pivo += 1
+
+    nome_lista[index_pivo], nome_lista[index_fim] = nome_lista[index_fim], nome_lista[index_pivo]
+
+    return index_pivo
+
+def ordena_quick(nome_lista: list, index_inicio: int = 0, index_fim: int = -1):
+    if (len(nome_lista) == 0):
+        return False, None
+    elif (len(nome_lista) == 1):
+        return True, nome_lista
+
+    if (index_fim == -1):
+        index_fim = len(nome_lista) - 1
+
+    if (index_inicio < index_fim):
+        index_pivo = particionar(nome_lista, index_inicio, index_fim)
+
+        ordena_quick(nome_lista, index_inicio, index_pivo - 1)
+        ordena_quick(nome_lista, index_pivo + 1, index_fim)
+
+    return True, nome_lista
+
+def ordena_lista(nome_lista: list, metodo_ordena: str):
+    try:
+        if (metodo_ordena.upper() == "BUBBLE"):
+            return ordena_bubble(nome_lista)
+        elif (metodo_ordena.upper() == "INSERTION"):
+            return ordena_insertion(nome_lista)
+        elif (metodo_ordena.upper() == "SELECTION"):
+            return ordena_selection(nome_lista)
+        elif (metodo_ordena.upper() == "QUICK"):
+            return ordena_quick(nome_lista)
+    except:
+        return False, None
+
+    return False, None
