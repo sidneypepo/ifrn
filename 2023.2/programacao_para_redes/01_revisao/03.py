@@ -18,10 +18,12 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-import funcoes
+import os, funcoes
 
 def main():
-    return
+    pacotes = funcoes.ler_pcap()
+    if (pacotes == None):
+        return
 
 if (__name__ == "__main__"):
     try:

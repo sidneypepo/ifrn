@@ -112,7 +112,7 @@ def salvar_lista(nome_lista: list, nome_arquivo: str = "valores_nao_ordenados.tx
 
 def ler_arquivo(nome_arquivo: str):
     try:
-        arquivo = open(nome_arquivo, 'r')
+        arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'r')
     except:
         return False, None
 
@@ -222,3 +222,77 @@ def ordena_lista(nome_lista: list, metodo_ordena: str):
         return False, None
 
     return False, None
+
+def parser_pcap_header(dados: bytes):
+    header = {}
+
+    header["magic_number"] = int.from_bytes(dados[0:4], "little")
+    if (header["magic_number"] == 2712847316):
+        endianness = "little"
+        precision = "micro"
+    elif (header["magic_number"] == 2712812621):
+        endianness = "little"
+        precision = "nano"
+    elif (header["magic_number"] == 3569595041):
+        endianness = "big"
+        precision = "micro"
+    elif (header["magic_number"] == 1295823521):
+        endianness = "big"
+        precision = "nano"
+    else:
+        return None
+
+    header["major_version"] = int.from_bytes(dados[4:6], endianness)
+    header["minor_version"] = int.from_bytes(dados[6:8], endianness)
+    if (header["major_version"] != 2 or header["minor_version"] != 4):
+        return None
+
+    header["snap_len"] = int.from_bytes(dados[16:20], endianness)
+    header["link_type"] = int.from_bytes(dados[20:24], endianness)
+    if (endianness == "little"):
+        header["fcs"] = int.from_bytes(dados[23:24], endianness) >> 5
+    else:
+        header["fcs"] = int.from_bytes(dados[20:21], endianness) >> 5
+
+    return endianness, precision, header
+
+def parser_pacote_header(dados: bytes, endianness: str):
+    header = {}
+    header["timestamp"] = int.from_bytes(dados[0:4], endianness)
+    header["precision"] = int.from_bytes(dados[4:8], endianness)
+    header["captured_length"] = int.from_bytes(dados[8:12], endianness)
+    header["original_length"] = int.from_bytes(dados[12:16], endianness)
+    return header
+
+def ler_pcap():
+    nome_arquivo = entrada_usuario("str", "Digite o nome do arquivo: ")
+    try:
+        arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, "rb")
+    except:
+        print("Erro: não foi possível abrir o arquivo!")
+        return None
+
+    pcap_info = parser_pcap_header(arquivo.read(24))
+    if (pcap_info == None):
+        print("Erro: arquivo corrompido!")
+        arquivo.close()
+        return None
+
+    endianness = pcap_info[0]
+    precision = pcap_info[1]
+    pcap_header = pcap_info[2]
+    pacotes = []
+    pacote = arquivo.read(16)
+
+    try:
+        while (len(pacote) != 0):
+            pacote = parser_pacote_header(pacote, endianness)
+            pacote["data"] = arquivo.read(pacote["captured_length"])
+            pacotes.append(pacote)
+            pacote = arquivo.read(16)
+    except:
+        print("Erro: não foi possível ler o arquivo!")
+        return None
+
+    arquivo.close()
+    return endianness, precision, pcap_header, pacotes
