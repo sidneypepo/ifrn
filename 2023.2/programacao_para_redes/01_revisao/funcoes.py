@@ -248,7 +248,7 @@ def parser_pcap_header(dados: bytes):
         return None
 
     header["snap_len"] = int.from_bytes(dados[16:20], endianness)
-    header["link_type"] = int.from_bytes(dados[20:24], endianness)
+    header["link_type"] = int.from_bytes(dados[20:24], endianness) & 268435455
     if (endianness == "little"):
         header["fcs"] = int.from_bytes(dados[23:24], endianness) >> 5
     else:
@@ -296,3 +296,58 @@ def ler_pcap():
 
     arquivo.close()
     return endianness, precision, pcap_header, pacotes
+
+def ehbissexto(ano: int):
+    if (not ehinteiro(str(ano))):
+        return False
+
+    if (ano % 400 == 0 or (ano % 4 == 0 and ano % 100 != 0)):
+        return True
+
+    return False
+
+def segundos_data(timestamp: int, precision: int, tipo_precision: str, gmt: int = 0):
+    if (tipo_precision == "micro" and ehinteiro(str(precision))):
+        precision = f"{precision / 1000000:.6f}"[2:]
+    elif (tipo_precision == "nano" and ehinteiro(str(precision))):
+        precision = f"{precision / 1000000000:.9f}"[2:]
+    else:
+        print("Erro: precisão inválida!")
+        return None
+
+    if (ehinteiro(str(timestamp)) and ehinteiro(str(gmt))):
+        timestamp += 60 * 60 * gmt
+    else:
+        print("Erro: timestamp inválida!")
+        return None
+
+    dias = timestamp // (60 * 60 * 24)
+    segundos = timestamp % (60 * 60 * 24)
+
+    ano = 1970
+    mes = 1
+    dia = 1
+    for index in (range(1, dias + 1)):
+        dia += 1
+        if (not ehbissexto(ano) and mes == 2 and dia == 29):
+            dia = 1
+            mes = 3
+        elif (ehbissexto(ano) and mes == 2 and dia == 30):
+            dia = 1
+            mes = 3
+        elif (mes == 12 and dia == 32):
+            ano += 1
+            mes = 1
+            dia = 1
+        elif ((mes == 4 or mes == 6 or mes == 9 or mes == 11) and dia == 31):
+            mes += 1
+            dia = 1
+        elif ((mes == 1 or mes == 3 or mes == 5 or mes == 7 or mes == 8 or mes == 10) and dia == 32):
+            mes += 1
+            dia = 1
+
+    hora = segundos // (60 * 60)
+    minuto = (segundos % (60 * 60)) // 60
+    segundo = segundos % 60
+
+    return f"{ano:04d}-{mes:02d}-{dia:02d}_{hora:02d}:{minuto:02d}:{segundo:02d}.{precision}"
