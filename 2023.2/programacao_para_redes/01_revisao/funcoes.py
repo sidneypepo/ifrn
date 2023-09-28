@@ -101,16 +101,16 @@ def gerar_lista(quantidade: int, valor_minimo: int = 1, valor_maximo: int = 1000
 def salvar_lista(nome_lista: list, nome_arquivo: str = "valores_nao_ordenados.txt"):
     try:
         arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'w')
+
+        for index in range(len(nome_lista)):
+            arquivo.write(f"{nome_lista[index]}\n")
     except:
         return False
-
-    for index in range(len(nome_lista)):
-        arquivo.write(f"{nome_lista[index]}\n")
 
     arquivo.close()
     return True
 
-def ler_arquivo(nome_arquivo: str):
+def ler_arquivo(nome_arquivo: str, ignorar_strings: bool = True):
     try:
         arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'r')
     except:
@@ -118,9 +118,12 @@ def ler_arquivo(nome_arquivo: str):
 
     lista = []
     for linha in arquivo:
-        if (not ehinteiro(linha[:-1])):
+        if (not ignorar_strings):
+            lista.append(linha)
+        elif (ehinteiro(linha[:-1]) and ignorar_strings):
+            lista.append(int(linha[:-1]))
+        else:
             return False, None
-        lista.append(int(linha[:-1]))
 
     arquivo.close()
     return True, lista
@@ -351,3 +354,16 @@ def segundos_data(timestamp: int, precision: int, tipo_precision: str, gmt: int 
     segundo = segundos % 60
 
     return f"{ano:04d}-{mes:02d}-{dia:02d}_{hora:02d}:{minuto:02d}:{segundo:02d}.{precision}"
+
+def criar_diretorio(nome_diretorio: str):
+    if (not nome_diretorio in os.listdir(DIRETORIO_ATUAL)):
+        os.mkdir(DIRETORIO_ATUAL + '/' + nome_diretorio)
+
+    return
+
+def ler_diretorio(nome_diretorio: str):
+    try:
+        conteudo = os.listdir(DIRETORIO_ATUAL + "/" + nome_diretorio)
+        return conteudo
+    except:
+        return []

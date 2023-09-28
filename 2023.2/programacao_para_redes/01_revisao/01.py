@@ -33,7 +33,6 @@ def main():
     nome_arquivo = funcoes.entrada_usuario("str", "Digite o nome do arquivo a ser salvo (com extensão): ")
 
     saida = funcoes.salvar_lista(lista[1], nome_arquivo)
-
     if (not saida):
         print("Erro: não foi possível salvar o arquivo!")
         return

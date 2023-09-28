@@ -119,7 +119,7 @@
 
    - A lista gerada deverá ser salva em um único arquivo chamado ~serie_historica_anp.txt~ dentro do diretório criado no primeiro item. Cada informação deverá ser separada por ~;~ (ponto e vírgula).
 
-   - Com base na lista gerada no segundo item, deverão ser geradas as seguintes listas abaixo (cada lista deverá ser salva em formato de arquivo com o dados separados por ~;~ no diretório criado no primeiro item). O nome de cada arquivo está no início de cada tópico:
+   - Com base na lista gerada no segundo item, deverão ser geradas as seguintes listas abaixo (cada lista deverá ser salva em formato de arquivo com os dados separados por ~;~ no diretório criado no primeiro item). O nome de cada arquivo está no início de cada tópico:
      + Nome do arquivo: ~media_bandeira.txt~
        bandeira - produto - ano - valor_medio_venda - quantidade_postos
 
