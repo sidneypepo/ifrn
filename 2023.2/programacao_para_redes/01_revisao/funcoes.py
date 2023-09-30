@@ -110,9 +110,9 @@ def salvar_lista(nome_lista: list, nome_arquivo: str = "valores_nao_ordenados.tx
     arquivo.close()
     return True
 
-def ler_arquivo(nome_arquivo: str, ignorar_strings: bool = True):
+def ler_arquivo(nome_arquivo: str, ignorar_strings: bool = True, encode: str = "utf-8"):
     try:
-        arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'r')
+        arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'r', encoding=encode)
     except:
         return False, None
 
@@ -272,8 +272,11 @@ def ler_pcap():
     try:
         arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, "rb")
     except:
-        print("Erro: não foi possível abrir o arquivo!")
-        return None
+        try:
+            arquivo = open(DIRETORIO_ATUAL + '/tcp_dump/' + nome_arquivo, "rb")
+        except:
+            print("Erro: não foi possível abrir o arquivo!")
+            return None
 
     pcap_info = parser_pcap_header(arquivo.read(24))
     if (pcap_info == None):
@@ -367,3 +370,24 @@ def ler_diretorio(nome_diretorio: str):
         return conteudo
     except:
         return []
+
+    return []
+
+def dividir_linha(linha: str, divisor: str = ';'):
+    if (not '"' in linha):
+        return linha.split(divisor)
+
+    aspas = []
+    for index in range(len(linha)):
+        if (linha[index] == '"' and (not linha[index:index + 2] == "\"\"" and not linha[index - 1:index + 1] == "\"\"")):
+            aspas.append(index)
+
+    linha_dividida = []
+    ultimo_index = 0
+    for index in range(1, len(aspas), 2):
+        linha_dividida += linha[ultimo_index:aspas[index - 1] - 1].split(divisor)
+        linha_dividida.append(linha[aspas[index - 1]:aspas[index] + 1])
+        ultimo_index = aspas[index] + 2
+    linha_dividida += linha[ultimo_index:].split(divisor)
+
+    return linha_dividida

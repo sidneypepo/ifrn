@@ -23,29 +23,33 @@ import funcoes
 def main():
     funcoes.criar_diretorio("dados_estatisticos")
     arquivos = funcoes.ler_diretorio("serie_historica_anp")
+    print("Lendo e gerando arquivos...")
 
     conteudos = ["Regiao – Sigla;Estado – Sigla;Produto;Data da Coleta;Valor de Venda;Bandeira"]
     media_bandeira = {}
     media_produto_regiao = {}
     for arquivo in arquivos:
-        conteudo = funcoes.ler_arquivo("serie_historica_anp/" + arquivo, False)
+        conteudo = funcoes.ler_arquivo("serie_historica_anp/" + arquivo, False, "latin-1")
         if (not conteudo[0]):
             print(f"Aviso: Não foi possível ler o arquivo {arquivo}")
             continue
         conteudo[1].pop(0)
+
         for index in range(len(conteudo[1])):
-            conteudo[1][index] = conteudo[1][index][:-1].split(';')
+            conteudo[1][index] = funcoes.dividir_linha(conteudo[1][index][:-1])
             conteudos.append(f"{conteudo[1][index][0]};{conteudo[1][index][1]};{conteudo[1][index][10]};{conteudo[1][index][11]};{conteudo[1][index][12]};{conteudo[1][index][15]}")
 
-            if (not f"{conteudo[1][index][15]};{conteudo[1][index][10]};{conteudo[1][index][11][-4:]};" in media_bandeira):
-                media_bandeira[f"{conteudo[1][index][15]};{conteudo[1][index][10]};{conteudo[1][index][11][-4:]};"] = [0, 0]
-            media_bandeira[f"{conteudo[1][index][15]};{conteudo[1][index][10]};{conteudo[1][index][11][-4:]};"][0] += float(conteudo[1][index][12].replace(',', '.'))
-            media_bandeira[f"{conteudo[1][index][15]};{conteudo[1][index][10]};{conteudo[1][index][11][-4:]};"][1] += 1
+            chave = f"{conteudo[1][index][15]};{conteudo[1][index][10]};{conteudo[1][index][11][-4:]};"
+            if (not chave in media_bandeira):
+                media_bandeira[chave] = [0, 0]
+            media_bandeira[chave][0] += float(conteudo[1][index][12].replace(',', '.'))
+            media_bandeira[chave][1] += 1
 
-            if (not f"{conteudo[1][index][10]};{conteudo[1][index][0]};{conteudo[1][index][11][-4:]};" in media_produto_regiao):
-                media_produto_regiao[f"{conteudo[1][index][10]};{conteudo[1][index][0]};{conteudo[1][index][11][-4:]};"] = [0, 0]
-            media_produto_regiao[f"{conteudo[1][index][10]};{conteudo[1][index][0]};{conteudo[1][index][11][-4:]};"][0] += float(conteudo[1][index][12].replace(',', '.'))
-            media_produto_regiao[f"{conteudo[1][index][10]};{conteudo[1][index][0]};{conteudo[1][index][11][-4:]};"][1] += 1
+            chave = f"{conteudo[1][index][10]};{conteudo[1][index][0]};{conteudo[1][index][11][-4:]};"
+            if (not chave in media_produto_regiao):
+                media_produto_regiao[chave] = [0, 0]
+            media_produto_regiao[chave][0] += float(conteudo[1][index][12].replace(',', '.'))
+            media_produto_regiao[chave][1] += 1
 
     saida = funcoes.salvar_lista(conteudos, "dados_estatisticos/serie_historica_anp.txt")
     if (not saida):
@@ -74,7 +78,7 @@ def main():
     return
 
 if (__name__ == "__main__"):
-    try:
-        main()
-    except:
-        print("\nSaindo...")
+    # try:
+    main()
+    # except:
+        # print("\nSaindo...")
