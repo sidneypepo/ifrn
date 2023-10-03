@@ -18,84 +18,67 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-import os, funcoes
+import funcoes
 
 def main():
-    pcap_info = funcoes.ler_pcap()
-    if (pcap_info == None):
-        return
+    funcoes.criar_diretorio("dados_estatisticos")
+    arquivos = funcoes.ler_diretorio("serie_historica_anp")
+    print("Lendo e gerando arquivos...")
 
-    endianness = pcap_info[0]
-    precision = pcap_info[1]
-    pcap_header = pcap_info[2]
-    pacotes = pcap_info[3]
-
-    if (pcap_header["link_type"] != 1):
-        print("Erro: protocolo de enlace desconhecido!", pcap_header["link_type"])
-        return
-
-    ips = {}
-    pares = {}
-    media_pacotes = 0
-    maior_pacote = 0
-    incompletos = 0
-    for index in range(len(pacotes)):
-        media_pacotes += pacotes[index]["original_length"]
-
-        if (pacotes[index]["original_length"] > maior_pacote):
-            maior_pacote = pacotes[index]["original_length"]
-        if (pacotes[index]["original_length"] != pacotes[index]["captured_length"]):
-            incompletos += 1
-        if (int.from_bytes((pacotes[index]["data"][12:14]), "big") != 2048):
+    conteudos = ["Regiao – Sigla;Estado – Sigla;Produto;Data da Coleta;Valor de Venda;Bandeira"]
+    media_bandeira = {}
+    media_produto_regiao = {}
+    for arquivo in arquivos:
+        conteudo = funcoes.ler_arquivo("serie_historica_anp/" + arquivo, False, "latin-1")
+        if (not conteudo[0]):
+            print(f"Aviso: Não foi possível ler o arquivo {arquivo}")
             continue
+        conteudo[1].pop(0)
 
-        source_ip = (int.from_bytes(pacotes[index]["data"][26:27], "big"), int.from_bytes(pacotes[index]["data"][27:28], "big"), int.from_bytes(pacotes[index]["data"][28:29], "big"), int.from_bytes(pacotes[index]["data"][29:30], "big"))
-        source_ip = f"{source_ip[0]}.{source_ip[1]}.{source_ip[2]}.{source_ip[3]}"
-        if (not source_ip in ips):
-            ips[source_ip] = 0
-        ips[source_ip] += 1
+        for index in range(len(conteudo[1])):
+            conteudo[1][index] = funcoes.dividir_linha(conteudo[1][index][:-1])
+            conteudos.append(f"{conteudo[1][index][0]};{conteudo[1][index][1]};{conteudo[1][index][10]};{conteudo[1][index][11]};{conteudo[1][index][12]};{conteudo[1][index][15]}")
 
-        destination_ip = (int.from_bytes(pacotes[index]["data"][30:31], "big"), int.from_bytes(pacotes[index]["data"][31:32], "big"), int.from_bytes(pacotes[index]["data"][32:33], "big"), int.from_bytes(pacotes[index]["data"][33:34], "big"))
-        destination_ip = f"{destination_ip[0]}.{destination_ip[1]}.{destination_ip[2]}.{destination_ip[3]}"
-        if (not destination_ip in ips):
-            ips[destination_ip] = 0
-        ips[destination_ip] += 1
+            chave = f"{conteudo[1][index][15]};{conteudo[1][index][10]};{conteudo[1][index][11][-4:]};"
+            if (not chave in media_bandeira):
+                media_bandeira[chave] = [0, 0]
+            media_bandeira[chave][0] += float(conteudo[1][index][12].replace(',', '.'))
+            media_bandeira[chave][1] += 1
 
-        if (f"{source_ip}-{destination_ip}" in pares):
-            pares[f"{source_ip}-{destination_ip}"] += 1
-        elif (f"{destination_ip}-{source_ip}" in pares):
-            pares[f"{destination_ip}-{source_ip}"] += 1
-        else:
-            pares[f"{source_ip}-{destination_ip}"] = 1
+            chave = f"{conteudo[1][index][10]};{conteudo[1][index][0]};{conteudo[1][index][11][-4:]};"
+            if (not chave in media_produto_regiao):
+                media_produto_regiao[chave] = [0, 0]
+            media_produto_regiao[chave][0] += float(conteudo[1][index][12].replace(',', '.'))
+            media_produto_regiao[chave][1] += 1
 
-    media_pacotes /= len(pacotes)
-    ips = dict(sorted(ips.items(), key=lambda item: item[1], reverse=True))
-    pares = dict(sorted(pares.items(), key=lambda item: item[1], reverse=True))
-
-    inicio_captura = funcoes.segundos_data(pacotes[0]["timestamp"], pacotes[0]["precision"], precision, -3)
-    fim_captura = funcoes.segundos_data(pacotes[-1]["timestamp"], pacotes[-1]["precision"], precision, -3)
-    if (inicio_captura != None and fim_captura != None):
-        print(f"Início | fim captura                : {inicio_captura} | {fim_captura}")
-    else:
+    saida = funcoes.salvar_lista(conteudos, "dados_estatisticos/serie_historica_anp.txt")
+    if (not saida):
+        print("Erro: não foi possível salvar o arquivo serie_historica_anp.txt!")
         return
 
-    print(f"Tamanho maior pacote (em bytes)     : {maior_pacote}")
+    conteudos = ["bandeira;produto;ano;valor_medio_venda;quantidade_postos"]
+    for chave in media_bandeira:
+        media_bandeira[chave][0] /= media_bandeira[chave][1]
+        conteudos.append(f"{chave}{media_bandeira[chave][0]:.3f};{media_bandeira[chave][1]}")
+    saida = funcoes.salvar_lista(conteudos, "dados_estatisticos/media_bandeira.txt")
+    if (not saida):
+        print("Erro: não foi possível salvar o arquivo media_bandeira.txt!")
+        return
 
-    print(f"Pacotes incompletos capturados      : ", end='')
-    if (incompletos > 0):
-        print(f"Sim, {incompletos} pacotes")
-    else:
-        print(f"Não")
+    conteudos = ["produto;região;ano;valor_medio;quantidade_postos"]
+    for chave in media_produto_regiao:
+        media_produto_regiao[chave][0] /= media_produto_regiao[chave][1]
+        conteudos.append(f"{chave}{media_produto_regiao[chave][0]:.3f};{media_produto_regiao[chave][1]}")
+    saida = funcoes.salvar_lista(conteudos, "dados_estatisticos/media_produto_regiao.txt")
+    if (not saida):
+        print("Erro: não foi possível salvar o arquivo media_produto_regiao.txt!")
+        return
 
-    print(f"Tamanho médio dos pacotes (em bytes): {media_pacotes:.2f}")
-
-    print(f"Par de IP's com maior tráfego       : {list(pares.items())[0][0]}")
-    print(f"Total de IP's distintos             : {len(ips) - 1:02d}")
-
+    print("Arquivos gerados com sucesso!")
     return
 
 if (__name__ == "__main__"):
-    try:
-        main()
-    except:
-        print("\nSaindo...")
+    # try:
+    main()
+    # except:
+        # print("\nSaindo...")

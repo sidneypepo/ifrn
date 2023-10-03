@@ -1,8 +1,8 @@
 #+title: README.org
 #+author: Sidney Pedro
-#+date: [2023-09-14 Thu]
+#+date: [2023-10-02 Mon]
 
-* Lista de exercícios 01 - Revisão
+* Atividade avaliativa 01 - Revisão
 1. Elaborar um programa que siga as seguintes especificações:
    - O programa deverá solicitar 3 valores inteiros sendo que, deverão ser tratadas as exceções caso os valores informados não sejam inteiros válidos;
 
@@ -42,73 +42,7 @@
 
      + Cada uma das funções de ordenação irá retornar ao programa 2 valores. O primeiro será um valor booleano (~True~ ou ~False~) informando se foi ordenada ou não e o segundo valor será a lista ordenada. Caso o primeiro valor de retorno seja ~False~, o segundo valor de retorno deverá ser ~None~.
 
-3. Nos anos 80, Van Jacobson, Steve McCanne e outros desenvolveram o /tcpdump/ – uma ferramenta de captura de tráfego de rede. A própria ferrramenta é capaz de decodificar o tráfego e apresentá-lo em em maneira legível aos usuários. Mas também pode gravá-lo em formato binário, para leitura e análise posterior.
-
-   Para gravar o tráfego no tcpdump use o comando ~tcpdump -w nomeArquivo.cap~. O formato do arquivo gravado é:
-
-   #+begin_src text
-   +-------------------+---------+---------+---------+----
-   | cabecalhoAarquivo | pacote1 | pacote2 | pacote3 | ...
-   +-------------------+---------+---------+---------+----
-   #+end_src
-
-   O formado cabeçalho do arquivo é:
-
-   #+begin_src text
-                       1                   2                   3
-       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   0  |                          Magic Number                         |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   4  |          Major Version        |         Minor Version         |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   8  |                           Reserved1                           |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   12 |                           Reserved2                           |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   16 |                            SnapLen                            |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   20 | FCS |f|                   LinkType                            |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   #+end_src
-
-   E o formato de cada pacote que segue o cabeçalho do arquivo é:
-
-   #+begin_src text
-                       1                   2                   3
-       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    0 |                       Timestamp (Seconds)                     |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    4 |            Timestamp (Microseconds or nanoseconds)            |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    8 |                    Captured Packet Length                     |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   12 |                    Original Packet Length                     |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   16 /                                                               /
-      /                          Packet Data                          /
-      /                        variable length                        /
-      /                                                               /
-      +---------------------------------------------------------------+
-   #+end_src
-
-   Explicações para o significado de cada um dos campos nas figuras anteriores, bem como informações adicionais, podem ser encontradas em: https://tools.ietf.org/id/draft-gharris-opsawg-pcap-00.html
-
-   Usando a linguagem de programação Python (versão 3.X) desenvolva um programa que leia um arquivo capturado pelo tcpdump (alguns exemplos encontram-se disponíveis no Moodle) e responda:
-   - Em que momento inicia/termina a captura de pacotes?
-
-   - Qual o tamanho do maior pacote capturado?
-
-   - Há pacotes que não foram salvos nas suas totalidades? Quantos?
-
-   - Qual o tamanho médio dos pacotes capturados?
-
-   - Qual o par de IP com maior tráfego entre eles?
-
-   - Com quantos outros IPs o IP da interface capturada interagiu?
-
-4. Fazer um programa que efetue a leitura dos arquivos que estão contidos no arquivo ~serie_historica_anp.rar~ [fn:1] e realize as seguintes operações (descompacte o arquivo em um diretório/pasta chamado ~serie_historica_anp~):
+3. Fazer um programa que efetue a leitura dos arquivos que estão contidos no arquivo ~serie_historica_anp.rar~ [fn:1] e realize as seguintes operações (descompacte o arquivo em um diretório/pasta chamado ~serie_historica_anp~):
    - *NÃO* deverá ser utilizada a biblioteca /CSV/, /PANDAS/ ou similares;
 
    - O programa deverá reconhecer a inclusão de novos arquivos no diretório/pasta sem ser necessária a alteração no código fonte.
@@ -117,16 +51,16 @@
 
    - Deverá ser gerada uma lista contendo as seguintes informações de todos os arquivos lidos: *Regiao – Sigla*, *Estado – Sigla*, *Produto*, *Data da Coleta*, *Valor de Venda*, *Bandeira*;
 
-   - A lista gerada deverá ser salva em um único arquivo chamado ~serie_historica_anp.txt~ dentro do diretório criado no primeiro item. Cada informação deverá ser separada por ~;~ (ponto e vírgula).
+   - A lista gerada deverá ser salva em um único arquivo chamado ~serie_historica_anp.txt~ dentro do diretório criado no terceiro item. Cada informação deverá ser separada por ~;~ (ponto e vírgula).
 
-   - Com base na lista gerada no segundo item, deverão ser geradas as seguintes listas abaixo (cada lista deverá ser salva em formato de arquivo com os dados separados por ~;~ no diretório criado no primeiro item). O nome de cada arquivo está no início de cada tópico:
+   - Com base na lista gerada no quarto item, deverão ser geradas as seguintes listas abaixo (cada lista deverá ser salva em formato de arquivo com os dados separados por ~;~ no diretório criado no terceiro item). O nome de cada arquivo está no início de cada tópico:
      + Nome do arquivo: ~media_bandeira.txt~
        bandeira - produto - ano - valor_medio_venda - quantidade_postos
 
      + Nome do arquivo: ~media_produto_regiao.txt~
        produto - região - ano - valor_medio - quantidade_postos
 
-5. Para realizar essa atividade será necessário efetuar o download do arquivo ~dados_cartola_fc.rar~ (disponível no Moodle).
+4. Para realizar essa atividade será necessário efetuar o download do arquivo ~dados_cartola_fc.rar~ (disponível no Moodle).
 
    Desenvolver um programa que atenda aos seguintes requisitos:
    - O programa deverá solicitar ao usuário o ano em que se deseja acessar os dados do Cartola FC;
