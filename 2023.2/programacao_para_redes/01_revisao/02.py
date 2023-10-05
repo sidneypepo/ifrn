@@ -25,7 +25,7 @@ def main():
 
     lista = funcoes.ler_arquivo(nome_arquivo)
     if (lista[1] == None):
-        print("Erro: não foi possível ler o arquivo!")
+        funcoes.mostrar_erro(False, "Erro: não foi possível ler o arquivo!")
         return
 
     metodos_ordenacao = ("BUBBLE", "INSERTION", "SELECTION", "QUICK")
@@ -36,7 +36,7 @@ def main():
 
     lista_ordenada = funcoes.ordena_lista(lista[1], metodo_ordena)
     if (lista_ordenada[1] == None):
-        print("Erro: não foi possível ordenar a lista!")
+        funcoes.mostrar_erro(False, "Erro: não foi possível ordenar a lista!")
         return
 
     print("Lista ordenada com sucesso!\nResultado:", end=' ')

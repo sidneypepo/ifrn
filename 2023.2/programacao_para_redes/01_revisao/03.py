@@ -53,7 +53,7 @@ def main():
 
     saida = funcoes.salvar_lista(conteudos, "dados_estatisticos/serie_historica_anp.txt")
     if (not saida):
-        print("Erro: não foi possível salvar o arquivo serie_historica_anp.txt!")
+        funcoes.mostrar_erro(False, "Erro: não foi possível salvar o arquivo serie_historica_anp.txt!")
         return
 
     conteudos = ["bandeira;produto;ano;valor_medio_venda;quantidade_postos"]
@@ -62,7 +62,7 @@ def main():
         conteudos.append(f"{chave}{media_bandeira[chave][0]:.3f};{media_bandeira[chave][1]}")
     saida = funcoes.salvar_lista(conteudos, "dados_estatisticos/media_bandeira.txt")
     if (not saida):
-        print("Erro: não foi possível salvar o arquivo media_bandeira.txt!")
+        funcoes.mostrar_erro(False, "Erro: não foi possível salvar o arquivo media_bandeira.txt!")
         return
 
     conteudos = ["produto;região;ano;valor_medio;quantidade_postos"]
@@ -71,14 +71,14 @@ def main():
         conteudos.append(f"{chave}{media_produto_regiao[chave][0]:.3f};{media_produto_regiao[chave][1]}")
     saida = funcoes.salvar_lista(conteudos, "dados_estatisticos/media_produto_regiao.txt")
     if (not saida):
-        print("Erro: não foi possível salvar o arquivo media_produto_regiao.txt!")
+        funcoes.mostrar_erro(False, "Erro: não foi possível salvar o arquivo media_produto_regiao.txt!")
         return
 
     print("Arquivos gerados com sucesso!")
     return
 
 if (__name__ == "__main__"):
-    # try:
-    main()
-    # except:
-        # print("\nSaindo...")
+    try:
+        main()
+    except:
+        print("\nSaindo...")

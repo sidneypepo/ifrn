@@ -18,7 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-import os, random
+import os, random, json
 
 DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
 
@@ -57,6 +57,8 @@ def ehfloat(numero: str):
 def mostrar_erro(ativar: bool, mensagem: str):
     if (not ativar):
         print(mensagem)
+
+    return
 
 def entrada_usuario(tipo: str, mensagem: str):
     valor = ""
@@ -241,9 +243,9 @@ def ler_diretorio(nome_diretorio: str):
 
     return []
 
-def dividir_linha(linha: str, divisor: str = ';'):
+def dividir_linha(linha: str, separador: str = ';'):
     if (not '"' in linha):
-        return linha.split(divisor)
+        return linha.split(separador)
 
     aspas = []
     for index in range(len(linha)):
@@ -253,9 +255,91 @@ def dividir_linha(linha: str, divisor: str = ';'):
     linha_dividida = []
     ultimo_index = 0
     for index in range(1, len(aspas), 2):
-        linha_dividida += linha[ultimo_index:aspas[index - 1] - 1].split(divisor)
+        linha_dividida += linha[ultimo_index:aspas[index - 1] - 1].split(separador)
         linha_dividida.append(linha[aspas[index - 1]:aspas[index] + 1])
         ultimo_index = aspas[index] + 2
-    linha_dividida += linha[ultimo_index:].split(divisor)
+    linha_dividida += linha[ultimo_index:].split(separador)
 
     return linha_dividida
+
+def ler_json_cartola():
+    ano = entrada_usuario("str", "Digite o ano do Cartola FC: ")
+    arquivo = ler_arquivo("cartola_fc_" + ano + ".txt", False)
+    if (not arquivo[0]):
+        arquivo = ler_arquivo("cartola_fc_" + ano + ".json", False)
+    if (not arquivo[0]):
+        arquivo = ler_arquivo("dados_cartola_fc/cartola_fc_" + ano + ".txt", False)
+        if (not arquivo[0]):
+            arquivo = ler_arquivo("dados_cartola_fc/cartola_fc_" + ano + ".json", False)
+        if (not arquivo[0]):
+            return None
+
+    conteudo = ""
+    for index in range(len(arquivo[1])):
+        conteudo += arquivo[1][index]
+
+    return ano, json.loads(conteudo)
+
+def menu_esquemas_cartola():
+    print("| Opção | Esquema |             Quantidade de jogadores              |")
+    print("|  01.  |  3-4-3  | 3 zagueiros / 0 laterais / 4 meias / 3 atacantes |")
+    print("|  02.  |  3-5-2  | 3 zagueiros / 0 laterais / 5 meias / 2 atacantes |")
+    print("|  03.  |  4-3-3  | 2 zagueiros / 2 laterais / 3 meias / 3 atacantes |")
+    print("|  04.  |  4-4-2  | 2 zagueiros / 2 laterais / 4 meias / 2 atacantes |")
+    print("|  05.  |  4-5-1  | 2 zagueiros / 2 laterais / 5 meias / 1 atacantes |")
+    print("|  06.  |  5-3-2  | 3 zagueiros / 2 laterais / 3 meias / 2 atacantes |")
+    print("|  07.  |  5-4-1  | 3 zagueiros / 2 laterais / 4 meias / 1 atacantes |\n")
+
+    return
+
+def organizar_cartola(cartola: dict):
+    clubes = {}
+    for index in range(len(cartola["atletas"])):
+        clube_id = str(cartola["atletas"][index]["clube_id"])
+        if (not clube_id in clubes):
+            clubes[clube_id] = [cartola["clubes"][clube_id]["nome_fantasia"], cartola["clubes"][clube_id]["escudos"]["60x60"], {'1': [], '2': [], '3': [], '4': [], '5': [], '6': []}]
+
+        posicao_id = str(cartola["atletas"][index]["posicao_id"])
+        clubes[clube_id][2][posicao_id].append([cartola["atletas"][index]["media_num"] * cartola["atletas"][index]["jogos_num"], cartola["atletas"][index]["apelido_abreviado"], cartola["atletas"][index]["nome"], cartola["atletas"][index]["foto"]])
+
+    for clube in clubes:
+        for posicao in clubes[clube][2]:
+            clubes[clube][2][posicao] = sorted(clubes[clube][2][posicao], key=lambda atleta: atleta[0], reverse=True)
+
+    return clubes
+
+def selecionar_atletas(esquema: int, clube: list, posicao: str, nome_posicao: str):
+    esquemas = {
+        1: {'1': 1, '2': 0, '3': 3, '4': 4, '5': 3, '6': 1},
+        2: {'1': 1, '2': 0, '3': 3, '4': 5, '5': 2, '6': 1},
+        3: {'1': 1, '2': 2, '3': 2, '4': 3, '5': 3, '6': 1},
+        4: {'1': 1, '2': 2, '3': 2, '4': 4, '5': 2, '6': 1},
+        5: {'1': 1, '2': 2, '3': 2, '4': 5, '5': 1, '6': 1},
+        6: {'1': 1, '2': 2, '3': 3, '4': 3, '5': 2, '6': 1},
+        7: {'1': 1, '2': 2, '3': 3, '4': 4, '5': 1, '6': 1}
+    }
+    quantidade_maxima = esquemas[esquema][posicao]
+
+    selecionados = []
+    for atleta in clube[2][posicao]:
+        if (len(selecionados) < quantidade_maxima):
+            string = nome_posicao + ';' + atleta[2] + ';' + atleta[3] + ';' + f"{atleta[0]:.3f}" + ';' + clube[0] + ';' + clube[1]
+            selecionados.append(string)
+            string = nome_posicao + " | " + atleta[1] + " | " + clube[0] + " | " + atleta[2]
+            print(string)
+
+    return selecionados
+
+def salvar_cartola(ano: str, clubes: dict, esquema: int, posicoes: dict):
+    if (esquema < 1 or esquema > 7):
+        mostrar_erro(False, "Erro: esquema tático inválido!")
+        return
+
+    lista = ["posição;nome;url_foto_atleta;pontuação;time;url_escudo_time"]
+    print("Posição | Nome abreviado | Time | Pontuação")
+    for clube in clubes:
+        for posicao in clubes[clube][2]:
+            lista += selecionar_atletas(esquema, clubes[clube], posicao, posicoes[posicao]["nome"])
+
+    salvar_lista(lista, f"selecao_cartola_fc_{ano}.txt")
+    return

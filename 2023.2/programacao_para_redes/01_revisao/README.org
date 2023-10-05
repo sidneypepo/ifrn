@@ -1,6 +1,6 @@
 #+title: README.org
 #+author: Sidney Pedro
-#+date: [2023-10-02 Mon]
+#+date: [2023-10-03 Tue]
 
 * Atividade avaliativa 01 - Revisão
 1. Elaborar um programa que siga as seguintes especificações:
@@ -55,9 +55,11 @@
 
    - Com base na lista gerada no quarto item, deverão ser geradas as seguintes listas abaixo (cada lista deverá ser salva em formato de arquivo com os dados separados por ~;~ no diretório criado no terceiro item). O nome de cada arquivo está no início de cada tópico:
      + Nome do arquivo: ~media_bandeira.txt~
+
        bandeira - produto - ano - valor_medio_venda - quantidade_postos
 
      + Nome do arquivo: ~media_produto_regiao.txt~
+
        produto - região - ano - valor_medio - quantidade_postos
 
 4. Para realizar essa atividade será necessário efetuar o download do arquivo ~dados_cartola_fc.rar~ (disponível no Moodle).
@@ -93,8 +95,7 @@
      + Os dados de cada jogador deverão ser separados por ~;~ (ponto e vírgula);
 
      + A primeira linha do arquivo deverá ser:
-       ~posição;nome;url_foto_atleta;pontuação;time;url_escudo_time;~
+       ~posição;nome;url_foto_atleta;pontuação;time;url_escudo_time~
 
 * Footnotes
-
 [fn:1] Dados extraídos de https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/serie-historica-de-precos-de-combustiveis (acessado em 17/01/2022)

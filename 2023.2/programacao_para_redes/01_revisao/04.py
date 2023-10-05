@@ -21,6 +21,19 @@
 import funcoes
 
 def main():
+    conteudo = funcoes.ler_json_cartola()
+    if (conteudo == None):
+        funcoes.mostrar_erro(False, "Erro: não foi possível abrir o arquivo!")
+        return
+
+    funcoes.menu_esquemas_cartola()
+    esquema = funcoes.entrada_usuario("nat", "Escolha o esquema tático (1-7): ")
+    if (esquema < 1 or esquema > 7):
+        funcoes.mostrar_erro(False, "Erro: esquema tático inválido!")
+        return
+
+    clubes = funcoes.organizar_cartola(conteudo[1])
+    funcoes.salvar_cartola(conteudo[0], clubes, esquema, conteudo[1]["posicoes"])
     return
 
 if (__name__ == "__main__"):

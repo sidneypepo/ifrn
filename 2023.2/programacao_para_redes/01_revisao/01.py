@@ -27,14 +27,14 @@ def main():
 
     lista = funcoes.gerar_lista(quantidade, valor_minimo, valor_maximo)
     if (lista[1] == None):
-        print("Erro: não foi possível gerar a lista!")
+        funcoes.mostrar_erro(False, "Erro: não foi possível gerar a lista!")
         return
 
     nome_arquivo = funcoes.entrada_usuario("str", "Digite o nome do arquivo a ser salvo (com extensão): ")
 
     saida = funcoes.salvar_lista(lista[1], nome_arquivo)
     if (not saida):
-        print("Erro: não foi possível salvar o arquivo!")
+        funcoes.mostrar_erro(False, "Erro: não foi possível salvar o arquivo!")
         return
 
     print("Arquivo salvo com sucesso!")
