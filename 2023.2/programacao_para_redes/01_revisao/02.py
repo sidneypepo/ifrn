@@ -18,34 +18,42 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+# Importando funções
 import funcoes
 
 def main():
-    nome_arquivo = funcoes.entrada_usuario("str", "Digite o nome do arquivo: ")
-
-    lista = funcoes.ler_arquivo(nome_arquivo)
+    # Obtendo nome do arquivo e o lendo. Caso o retorno da lista seja
+    # False e None, um erro é apresentado e o programa é finalizado
+    lista = funcoes.ler_arquivo(funcoes.entrada_usuario("str", "Digite o nome do arquivo: "))
     if (lista[1] == None):
         funcoes.mostrar_erro(False, "Erro: não foi possível ler o arquivo!")
         return
 
+    # Definindo possíveis métodos de ordenação da lista e obtendo
+    # método do usuário. Caso o método não exista, um erro é
+    # apresentado e o programa é finalizado
     metodos_ordenacao = ("BUBBLE", "INSERTION", "SELECTION", "QUICK")
-    metodo_ordena = ""
-    while (not metodo_ordena.upper() in metodos_ordenacao):
-        metodo_ordena = funcoes.entrada_usuario("str", "Digite o método de ordenação (bubble/insertion/selection/quick): ")
-        funcoes.mostrar_erro((metodo_ordena.upper() in metodos_ordenacao), "Erro: método inválido!\n")
+    metodo_ordena = funcoes.entrada_usuario("str", "Digite o método de ordenação (bubble/insertion/selection/quick): ")
+    if (not metodo_ordena.upper() in metodos_ordenacao):
+        funcoes.mostrar_erro(False, "Erro: método inválido!")
+        return
 
-    lista_ordenada = funcoes.ordena_lista(lista[1], metodo_ordena)
-    if (lista_ordenada[1] == None):
+    # Ordenando lista com o método selecionado pelo usuário. Caso o
+    # retorno da lista seja False e None, um erro é apresentado e o
+    # programa é finalizado
+    lista = funcoes.ordena_lista(lista[1], metodo_ordena)
+    if (lista[1] == None):
         funcoes.mostrar_erro(False, "Erro: não foi possível ordenar a lista!")
         return
 
+    # Apresentando lista ordenada e saindo do programa
     print("Lista ordenada com sucesso!\nResultado:", end=' ')
-    for item in range(len(lista_ordenada[1])):
-        print(lista_ordenada[1][item], end=' ')
-
+    for item in range(len(lista[1])):
+        print(lista[1][item], end=' ')
     print()
     return
 
+# Entrando na função main e, em caso de exceção, saindo
 if (__name__ == "__main__"):
     try:
         main()

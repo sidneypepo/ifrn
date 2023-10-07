@@ -18,89 +18,126 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+# Importando funções
 import os, random, json
 
+# Armazenando caminho completo do diretório desse programa para
+# funções que leem ou escrevem arquivos
 DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
 
+# Função para testar se uma string é um número natural
 def ehnatural(numero: str):
+    # Se a string for vazia, retorna-se False
     if (len(numero) < 1):
         return False
+
+    # Navegando em cada caractere da string e, se algum deles não for
+    # um caractere numérico, retorna-se False
     for index in range(len(numero)):
         if (numero[index] < '0' or numero[index] > '9'):
             return False
 
+    # Retorna True, caso a string seja um número natural
     return True
 
+# Função para testar se uma string é um número inteiro
 def ehinteiro(numero: str):
+    # Se a string for vazia, retorna-se False
+    if (len(numero) < 1):
+        return False
+
+    # Se a string for um número natural retorna-se True. Se não,
+    # se o primeiro caractere for um hífem e o resto da string
+    # for um número natural, retorna-se True
     if (ehnatural(numero)):
             return True
-    elif (len(numero) > 1):
-        if (numero[0] == '-' and ehnatural(numero[1:])):
-            return True
-        else:
-            return False
+    elif (numero[0] == '-' and ehnatural(numero[1:])):
+        return True
 
+    # Retorna False, casoa string não seja um número inteiro
     return False
 
+# Função para testar se uma string é um número fracionário
 def ehfloat(numero: str):
+    # Se a string for vazia, retorna-se False
+    if (len(numero) < 1):
+        return False
+
+    # Se a string for um número inteiro retorna-se True. Se não,
+    # se houver um caractere ponto na string e se os caracteres
+    # anteriores a ele forem um número inteiro e os posteriores
+    # um número natural, retorna-se True
     if (ehinteiro(numero)):
         return True
     elif ('.' in numero):
         ponto = numero.index('.')
         if (ehinteiro(numero[:ponto]) and ehnatural(numero[ponto + 1:])):
             return True
-        else:
-            return False
 
+    # Retorna False, casoa string não seja um número fracionário
     return False
 
+# Função para mostrar erro se o booleano informado for False
 def mostrar_erro(ativar: bool, mensagem: str):
     if (not ativar):
         print(mensagem)
 
     return
 
+# Função para receber e tratar dados informados pelo usuário
 def entrada_usuario(tipo: str, mensagem: str):
-    valor = ""
+    # Incializando dado
+    dado = ""
 
+    # Solitando dado com tipo informado, usando mensagem também
+    # informada, enquanto não for digitado um dado válido e mostrando
+    # erro em caso de dado inválido
     if (tipo.lower() == "nat"):
-        while (not ehnatural(valor)):
-            valor = input(mensagem)
-            mostrar_erro(ehnatural(valor), "Erro: Digite um número natural!\n")
-        valor = int(valor)
+        while (not ehnatural(dado)):
+            dado = input(mensagem)
+            mostrar_erro(ehnatural(dado), "Erro: Digite um número natural!\n")
+        dado = int(dado)
     elif (tipo.lower() == "int"):
-        while (not ehinteiro(valor)):
-            valor = input(mensagem)
-            mostrar_erro(ehinteiro(valor), "Erro: Digite um número inteiro!\n")
-        valor = int(valor)
+        while (not ehinteiro(dado)):
+            dado = input(mensagem)
+            mostrar_erro(ehinteiro(dado), "Erro: Digite um número inteiro!\n")
+        dado = int(dado)
     elif (tipo.lower() == "float"):
-        while (not ehfloat(valor)):
-            valor = input(mensagem)
-            mostrar_erro(ehfloat(valor), "Erro: Digite um número fracionário!\n")
-        valor = float(valor)
+        while (not ehfloat(dado)):
+            dado = input(mensagem)
+            mostrar_erro(ehfloat(dado), "Erro: Digite um número fracionário!\n")
+        dado = float(dado)
     elif (tipo.lower() == "str"):
-        while (not len(valor) > 0):
-            valor = input(mensagem)
-            mostrar_erro((len(valor) > 0), "Erro: Digite uma string válida!\n")
+        while (not len(dado) > 0):
+            dado = input(mensagem)
+            mostrar_erro((len(dado) > 0), "Erro: Digite uma string válida!\n")
     else:
-        valor = None
+        dado = None
 
-    return valor
+    # Retornando dado obtido
+    return dado
 
+# Função para gerar uma quantidade de números aleatórios, com
+# valores entre o mínimo e máximo informados
 def gerar_lista(quantidade: int, valor_minimo: int = 1, valor_maximo: int = 1000000):
-    if (valor_minimo < 0):
-        return False, None
+    # Se o valor máximo for maior que o mínimo, seus valores são
+    # invertidos
     if (valor_maximo < valor_minimo):
-        return False, None
+        valor_minimo, valor_maximo = valor_maximo, valor_minimo
 
+    # Inicializando lista vazia e gerando e armazenando números
+    # aleatórios na lista
     lista = []
-
     for index in range(quantidade):
         lista.append(random.randint(valor_minimo, valor_maximo))
 
+    # Retornando True e a lista gerada
     return True, lista
 
+# Função para salvar uma lista em um arquivo
 def salvar_lista(nome_lista: list, nome_arquivo: str = "valores_nao_ordenados.txt"):
+    # Tentando abrir e escrever a lista no arquivo informado e, em
+    # caso de erro, retorna-se False
     try:
         arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'w')
 
@@ -109,15 +146,23 @@ def salvar_lista(nome_lista: list, nome_arquivo: str = "valores_nao_ordenados.tx
     except:
         return False
 
+    # Fechando o arquivo e retornando True
     arquivo.close()
     return True
 
+# Função para ler um arquivo
 def ler_arquivo(nome_arquivo: str, ignorar_strings: bool = True, encode: str = "utf-8"):
+    # Tentando abrir o arquivo informado e, em caso de erro,
+    # retorna-se False e None
     try:
         arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'r', encoding=encode)
     except:
         return False, None
 
+    # Lendo e armazenando linhas do arquivo em uma lista de strings,
+    # se não for para ignorar as strings, ou lista de números, se
+    # for para ignorar as string e o conteúdo de cada linha for um
+    # número
     lista = []
     for linha in arquivo:
         if (not ignorar_strings):
@@ -127,93 +172,138 @@ def ler_arquivo(nome_arquivo: str, ignorar_strings: bool = True, encode: str = "
         else:
             return False, None
 
+    # Fechando o arquivo e retornando True e o conteúdo do arquivo
     arquivo.close()
     return True, lista
 
+# Função para ordenar lista com bubble sort
 def ordena_bubble(nome_lista: list):
-    if (len(nome_lista) == 0):
+    # Se a lista informada estiver vazia, retorna-se False e None.
+    # Se não, se a lista só possuir um elemento, retorna-se True
+    # e a própria lista
+    if (len(nome_lista) < 1):
         return False, None
     elif (len(nome_lista) == 1):
         return True, nome_lista
 
+    # Navegando em todos os elementos da lista e, se o elemento atual
+    # for maior que o seguinte, inverte-se os dois elementos
     invercao = False
-
     for index in range(len(nome_lista) - 1):
         if (nome_lista[index] > nome_lista[index + 1]):
             invercao = True
             nome_lista[index], nome_lista[index + 1] = nome_lista[index + 1], nome_lista[index]
 
+    # Se houve alguma inversão, chama-se essa mesma função para
+    # corrigir possíveis valores ainda desordenados
     if (invercao):
         ordena_bubble(nome_lista)
 
+    # Retornando True e a lista ordenada
     return True, nome_lista
 
+# Função para ordenar lista com insertion sort
 def ordena_insertion(nome_lista: list):
-    if (len(nome_lista) == 0):
+    # Se a lista informada estiver vazia, retorna-se False e None.
+    # Se não, se a lista só possuir um elemento, retorna-se True
+    # e a própria lista
+    if (len(nome_lista) < 1):
         return False, None
     elif (len(nome_lista) == 1):
         return True, nome_lista
 
+    # Navegando em todos os elementos da lista
     for index in range(1, len(nome_lista)):
+        # Armazenando valor da posição atual e posição atual e movendo
+        # todos os valores anteriores ao atual que sejam menores para
+        # uma posição à frente
         valor_temp = nome_lista[index]
-
         novo_index = index
         while (novo_index > 0 and valor_temp < nome_lista[novo_index - 1]):
             nome_lista[novo_index] = nome_lista[novo_index - 1]
             novo_index -= 1
 
+        # Armazenando o valor da posição atual na antiga posição do
+        # último número maior que o armazenado
         nome_lista[novo_index] = valor_temp
 
+    # Retornando True e a lista ordenada
     return True, nome_lista
 
+# Função para ordenar lista com selection sort
 def ordena_selection(nome_lista: list):
-    if (len(nome_lista) == 0):
+    # Se a lista informada estiver vazia, retorna-se False e None.
+    # Se não, se a lista só possuir um elemento, retorna-se True
+    # e a própria lista
+    if (len(nome_lista) < 1):
         return False, None
     elif (len(nome_lista) == 1):
         return True, nome_lista
 
+    # Navegando em todos os elementos da lista e armazenando a posição
+    # do menor elemento encontrado após o elemento atual
     for index in range(len(nome_lista)):
         index_temp = index
-
         for outro_index in range(index + 1, len(nome_lista)):
             if (nome_lista[outro_index] < nome_lista[index_temp]):
                 index_temp = outro_index
 
+        # Invertendo o elemento atual com o menor elemento encontrado após
+        # o atual
         nome_lista[index], nome_lista[index_temp] = nome_lista[index_temp], nome_lista[index]
 
+    # Retornando True e a lista ordenada
     return True, nome_lista
 
+# Funcão para particionar lista em volta de um índice pivô
 def particionar(nome_lista: list, index_inicio: int, index_fim: int):
+    # Armazenando valor do pivô e o atual índice pivô, navegando nos
+    # elementos da lista entre o primeiro e o último. Se o elemento
+    # atual for menor ou igual ao valor do pivô, inverte-se o elemento
+    # atual com o atual índice pivô e soma-se um ao índice pivô
     valor_pivo = nome_lista[index_fim]
     index_pivo = index_inicio
-
     for index in range(index_inicio, index_fim):
         if (nome_lista[index] <= valor_pivo):
             nome_lista[index_pivo], nome_lista[index] = nome_lista[index], nome_lista[index_pivo]
             index_pivo += 1
 
+    # Invertendo valor do índice pivô com o valor do pivô e retornando
+    # o índice pivô
     nome_lista[index_pivo], nome_lista[index_fim] = nome_lista[index_fim], nome_lista[index_pivo]
-
     return index_pivo
 
+# Função para ordenar lista com quick sort
 def ordena_quick(nome_lista: list, index_inicio: int = 0, index_fim: int = -1):
-    if (len(nome_lista) == 0):
+    # Se a lista informada estiver vazia, retorna-se False e None.
+    # Se não, se a lista só possuir um elemento, retorna-se True
+    # e a própria lista
+    if (len(nome_lista) < 1):
         return False, None
     elif (len(nome_lista) == 1):
         return True, nome_lista
 
+    # Se o último índice for -1, o mesmo é substituido pelo último
+    # índice da lista
     if (index_fim == -1):
         index_fim = len(nome_lista) - 1
 
+    # Se o primeiro índice for menor que o último índice,
+    # particiona-se a lista entre valores menores e maiores que o
+    # valor pivô e ordena-se a partição de valores menores e maiores
+    # que o valor pivô, respectivamente, chamando esta mesma função
     if (index_inicio < index_fim):
         index_pivo = particionar(nome_lista, index_inicio, index_fim)
-
         ordena_quick(nome_lista, index_inicio, index_pivo - 1)
         ordena_quick(nome_lista, index_pivo + 1, index_fim)
 
+    # Retornando True e a lista ordenada
     return True, nome_lista
 
+# Função para ordenar lista com o método informado
 def ordena_lista(nome_lista: list, metodo_ordena: str):
+    # Tentando ordenar a lista com algum dos possíveis métodos e a
+    # retornando e, em caso de erro, retorna-se False e None
     try:
         if (metodo_ordena.upper() == "BUBBLE"):
             return ordena_bubble(nome_lista)
@@ -226,6 +316,8 @@ def ordena_lista(nome_lista: list, metodo_ordena: str):
     except:
         return False, None
 
+    # Retornando False e None, caso nenhum dos métodos de ordenação
+    # seja utilizado
     return False, None
 
 def criar_diretorio(nome_diretorio: str):
@@ -236,7 +328,7 @@ def criar_diretorio(nome_diretorio: str):
 
 def ler_diretorio(nome_diretorio: str):
     try:
-        conteudo = os.listdir(DIRETORIO_ATUAL + "/" + nome_diretorio)
+        conteudo = os.listdir(DIRETORIO_ATUAL + '/' + nome_diretorio)
         return conteudo
     except:
         return []
