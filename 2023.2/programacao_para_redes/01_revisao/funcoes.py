@@ -25,6 +25,17 @@ import os, random, json
 # funções que leem ou escrevem arquivos
 DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
 
+# Armazenando possíveis esquemas do Cartola FC
+ESQUEMAS = {
+    1: {'1': 1, '2': 0, '3': 3, '4': 4, '5': 3, '6': 1},
+    2: {'1': 1, '2': 0, '3': 3, '4': 5, '5': 2, '6': 1},
+    3: {'1': 1, '2': 2, '3': 2, '4': 3, '5': 3, '6': 1},
+    4: {'1': 1, '2': 2, '3': 2, '4': 4, '5': 2, '6': 1},
+    5: {'1': 1, '2': 2, '3': 2, '4': 5, '5': 1, '6': 1},
+    6: {'1': 1, '2': 2, '3': 3, '4': 3, '5': 2, '6': 1},
+    7: {'1': 1, '2': 2, '3': 3, '4': 4, '5': 1, '6': 1}
+}
+
 # Função para testar se uma string é um número natural
 def ehnatural(numero: str):
     # Se a string for vazia, retorna-se False
@@ -320,12 +331,14 @@ def ordena_lista(nome_lista: list, metodo_ordena: str):
     # seja utilizado
     return False, None
 
+# Função para criar um diretório
 def criar_diretorio(nome_diretorio: str):
     if (not nome_diretorio in os.listdir(DIRETORIO_ATUAL)):
         os.mkdir(DIRETORIO_ATUAL + '/' + nome_diretorio)
 
     return
 
+# Função para ler os arquivos presentes em um diretório
 def ler_diretorio(nome_diretorio: str):
     try:
         conteudo = os.listdir(DIRETORIO_ATUAL + '/' + nome_diretorio)
@@ -335,26 +348,38 @@ def ler_diretorio(nome_diretorio: str):
 
     return []
 
-def dividir_linha(linha: str, separador: str = ';'):
-    if (not '"' in linha):
-        return linha.split(separador)
+# Função para dividir uma string
+def dividir_string(string: str, separador: str = ';'):
+    # Se não houver um caractere de aspa na string, retorna-se a mesma
+    # dividida pelo caractere separador
+    if (not '"' in string):
+        return string.split(separador)
 
+    # Armazenando posição da(s) aspa(s) não duplicadas presente(s) na string
     aspas = []
-    for index in range(len(linha)):
-        if (linha[index] == '"' and (not linha[index:index + 2] == "\"\"" and not linha[index - 1:index + 1] == "\"\"")):
+    for index in range(len(string)):
+        if (string[index] == '"' and (not string[index:index + 2] == "\"\"" and not string[index - 1:index + 1] == "\"\"")):
             aspas.append(index)
 
-    linha_dividida = []
+    # Navegando em cada elementos da lista de posições das aspas,
+    # dividindo e armazenando string anterior à primeira aspa,
+    # armazenando a string contida entre o par de aspas e dividindo
+    # a string posterior à última aspa
+    string_dividida = []
     ultimo_index = 0
     for index in range(1, len(aspas), 2):
-        linha_dividida += linha[ultimo_index:aspas[index - 1] - 1].split(separador)
-        linha_dividida.append(linha[aspas[index - 1]:aspas[index] + 1])
+        string_dividida += string[ultimo_index:aspas[index - 1] - 1].split(separador)
+        string_dividida.append(string[aspas[index - 1]:aspas[index] + 1])
         ultimo_index = aspas[index] + 2
-    linha_dividida += linha[ultimo_index:].split(separador)
+    string_dividida += string[ultimo_index:].split(separador)
 
-    return linha_dividida
+    # Retornando string dividia
+    return string_dividida
 
+# Função para abrir e ler um arquivo json do Cartola FC
 def ler_json_cartola():
+    # Obtendo ano do arquivo e lendo o correspondente, se existir.
+    # Se não existir, retorna-se None
     ano = entrada_usuario("str", "Digite o ano do Cartola FC: ")
     arquivo = ler_arquivo("cartola_fc_" + ano + ".txt", False)
     if (not arquivo[0]):
@@ -366,13 +391,17 @@ def ler_json_cartola():
         if (not arquivo[0]):
             return None
 
+    # Convertendo lista de linhas do arquivo lido para string
     conteudo = ""
     for index in range(len(arquivo[1])):
         conteudo += arquivo[1][index]
 
+    # Retornando ano e json do arquivo
     return ano, json.loads(conteudo)
 
+# Função para apresentar o menu de esquemas táticos
 def menu_esquemas_cartola():
+    # Apresentando menu
     print("| Opção | Esquema |             Quantidade de jogadores              |")
     print("|  01.  |  3-4-3  | 3 zagueiros / 0 laterais / 4 meias / 3 atacantes |")
     print("|  02.  |  3-5-2  | 3 zagueiros / 0 laterais / 5 meias / 2 atacantes |")
@@ -382,56 +411,75 @@ def menu_esquemas_cartola():
     print("|  06.  |  5-3-2  | 3 zagueiros / 2 laterais / 3 meias / 2 atacantes |")
     print("|  07.  |  5-4-1  | 3 zagueiros / 2 laterais / 4 meias / 1 atacantes |\n")
 
+    # Retornando
     return
 
+# Função para organizar o json do Cartola FC
 def organizar_cartola(cartola: dict):
+    # Navegando em cada atleta do Cartola FC
     clubes = {}
     for index in range(len(cartola["atletas"])):
+        # Se não existir, cria-se chave do clube do atleta atual do
+        # Cartola FC com nome, escudo e posições dos jogadores
         clube_id = str(cartola["atletas"][index]["clube_id"])
         if (not clube_id in clubes):
             clubes[clube_id] = [cartola["clubes"][clube_id]["nome_fantasia"], cartola["clubes"][clube_id]["escudos"]["60x60"], {'1': [], '2': [], '3': [], '4': [], '5': [], '6': []}]
 
+        # Adicionando jogador ao dicionário, em sua posição de seu clube
         posicao_id = str(cartola["atletas"][index]["posicao_id"])
         clubes[clube_id][2][posicao_id].append([cartola["atletas"][index]["media_num"] * cartola["atletas"][index]["jogos_num"], cartola["atletas"][index]["apelido_abreviado"], cartola["atletas"][index]["nome"], cartola["atletas"][index]["foto"]])
 
+    # Ordenando jogadores de cada posição de cada clube de forma decrescente
+    # por sua pontuação
     for clube in clubes:
         for posicao in clubes[clube][2]:
             clubes[clube][2][posicao] = sorted(clubes[clube][2][posicao], key=lambda atleta: atleta[0], reverse=True)
 
+    # Retornando dicionário
     return clubes
 
+# Função para selecionar atletas do Cartola FC
 def selecionar_atletas(esquema: int, clube: list, posicao: str, nome_posicao: str):
-    esquemas = {
-        1: {'1': 1, '2': 0, '3': 3, '4': 4, '5': 3, '6': 1},
-        2: {'1': 1, '2': 0, '3': 3, '4': 5, '5': 2, '6': 1},
-        3: {'1': 1, '2': 2, '3': 2, '4': 3, '5': 3, '6': 1},
-        4: {'1': 1, '2': 2, '3': 2, '4': 4, '5': 2, '6': 1},
-        5: {'1': 1, '2': 2, '3': 2, '4': 5, '5': 1, '6': 1},
-        6: {'1': 1, '2': 2, '3': 3, '4': 3, '5': 2, '6': 1},
-        7: {'1': 1, '2': 2, '3': 3, '4': 4, '5': 1, '6': 1}
-    }
-    quantidade_maxima = esquemas[esquema][posicao]
+    # Obtendo quantidade de jogadores na posição e esquema fornecidos
+    quantidade_maxima = ESQUEMAS[esquema][posicao]
 
+    # Armazenando e apresentando atletas selecionados até que a
+    # quantidade máxima de atletas em determinada posição seja
+    # atingida
+    print("Posição | Nome abreviado | Time | Pontuação")
     selecionados = []
-    for atleta in clube[2][posicao]:
-        if (len(selecionados) < quantidade_maxima):
-            string = nome_posicao + ';' + atleta[2] + ';' + atleta[3] + ';' + f"{atleta[0]:.3f}" + ';' + clube[0] + ';' + clube[1]
-            selecionados.append(string)
-            string = nome_posicao + " | " + atleta[1] + " | " + clube[0] + " | " + atleta[2]
-            print(string)
+    while (len(selecionados) < quantidade_maxima):
+        # Selecionando atleta com maior pontuação
+        atleta = clube[2][posicao][0]
+        clube[2][posicao].pop(0)
 
+        # Armazenando atleta selecionado
+        string = nome_posicao + ';' + atleta[2] + ';' + atleta[3] + ';' + f"{atleta[0]:.3f}" + ';' + clube[0] + ';' + clube[1]
+        selecionados.append(string)
+
+        # Apresentando atleta selecionado
+        string = nome_posicao + " | " + atleta[1] + " | " + clube[0] + " | " + atleta[2]
+        print(string)
+
+    # Retornando lista de atletas selecionados
     return selecionados
 
+# Função para salvar o dicionário organizado do Cartola FC com os
+# melhores atletas
 def salvar_cartola(ano: str, clubes: dict, esquema: int, posicoes: dict):
+    # Se o esquema for inválido, um erro é apresentado e retorna-se
     if (esquema < 1 or esquema > 7):
         mostrar_erro(False, "Erro: esquema tático inválido!")
         return
 
+    # Incializando lista a ser salva, navegando em cada posição de
+    # cada clube e selecionando os atletas com maior pontuação
     lista = ["posição;nome;url_foto_atleta;pontuação;time;url_escudo_time"]
-    print("Posição | Nome abreviado | Time | Pontuação")
     for clube in clubes:
         for posicao in clubes[clube][2]:
             lista += selecionar_atletas(esquema, clubes[clube], posicao, posicoes[posicao]["nome"])
 
+    # Salvando dicionário com os atletas selecionados em um arquivo e
+    # retornando
     salvar_lista(lista, f"selecao_cartola_fc_{ano}.txt")
     return

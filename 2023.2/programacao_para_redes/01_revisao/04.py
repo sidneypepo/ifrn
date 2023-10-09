@@ -18,24 +18,33 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+# Importando funções
 import funcoes
 
 def main():
+    # Lendo arquivo json. Caso o retorno da leitura seja None, um erro
+    # é apresentado e o programa é finalizado
     conteudo = funcoes.ler_json_cartola()
     if (conteudo == None):
         funcoes.mostrar_erro(False, "Erro: não foi possível abrir o arquivo!")
         return
 
+    # Apresentando menu de esquemas táticos e solicitando seleção do
+    # usuário. Caso o esquema selecionado seja inválido, um erro é
+    # apresentado e o programa é finalizado
     funcoes.menu_esquemas_cartola()
     esquema = funcoes.entrada_usuario("nat", "Escolha o esquema tático (1-7): ")
     if (esquema < 1 or esquema > 7):
         funcoes.mostrar_erro(False, "Erro: esquema tático inválido!")
         return
 
+    # Organizando dados lidos, os apresentando e salvando em um
+    # arquivo e finalizando programa
     clubes = funcoes.organizar_cartola(conteudo[1])
     funcoes.salvar_cartola(conteudo[0], clubes, esquema, conteudo[1]["posicoes"])
     return
 
+# Entrando na função main e, em caso de exceção, saindo
 if (__name__ == "__main__"):
     try:
         main()
