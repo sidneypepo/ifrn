@@ -1,0 +1,14 @@
+{
+    "1": "Unsigned Byte",
+    "2": "ASCII String",
+    "3": "Unsigned Short",
+    "4": "Unsigned Long",
+    "5": "Unsigned Rational",
+    "6": "Signed Byte",
+    "7": "Undefinied",
+    "8": "Signed Short",
+    "9": "Signed Long",
+    "16": "Signed Rational",
+    "17": "Single Float",
+    "18": "Double Float"
+}
