@@ -1,0 +1,70 @@
+#+title: README.org
+#+author: Sidney Pedro
+#+date: [2023-11-02 Thu]
+
+* Atividade avaliativa 02 - tcpdump
+Nos anos 80, Van Jacobson, Steve McCanne e outros desenvolveram o /tcpdump/ – uma ferramenta de captura de tráfego de rede. A própria ferrramenta é capaz de decodificar o tráfego e apresentá-lo em em maneira legível aos usuários. Mas também pode gravá-lo em formato binário, para leitura e análise posterior.
+
+Para gravar o tráfego no tcpdump use o comando ~tcpdump -w nomeArquivo.cap~. O formato do arquivo gravado é:
+
+#+begin_src text
++-------------------+---------+---------+---------+----
+| cabecalhoAarquivo | pacote1 | pacote2 | pacote3 | ...
++-------------------+---------+---------+---------+----
+#+end_src
+
+O formado cabeçalho do arquivo é:
+
+#+begin_src text
+                    1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+0  |                          Magic Number                         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+4  |          Major Version        |         Minor Version         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+8  |                           Reserved1                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+12 |                           Reserved2                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+16 |                            SnapLen                            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+20 | FCS |f|                   LinkType                            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+#+end_src
+
+E o formato de cada pacote que segue o cabeçalho do arquivo é:
+
+#+begin_src text
+                    1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ 0 |                       Timestamp (Seconds)                     |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ 4 |            Timestamp (Microseconds or nanoseconds)            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ 8 |                    Captured Packet Length                     |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+12 |                    Original Packet Length                     |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+16 /                                                               /
+   /                          Packet Data                          /
+   /                        variable length                        /
+   /                                                               /
+   +---------------------------------------------------------------+
+#+end_src
+
+Explicações para o significado de cada um dos campos nas figuras anteriores, bem como informações adicionais, podem ser encontradas em: https://tools.ietf.org/id/draft-gharris-opsawg-pcap-00.html
+
+Usando a linguagem de programação Python (versão 3.X) desenvolva um programa que leia um arquivo capturado pelo tcpdump (alguns exemplos encontram-se disponíveis no Moodle) e responda:
+- Em que momento inicia/termina a captura de pacotes?
+
+- Qual o tamanho do maior pacote capturado?
+
+- Há pacotes que não foram salvos nas suas totalidades? Quantos?
+
+- Qual o tamanho médio dos pacotes capturados?
+
+- Qual o par de IP com maior tráfego entre eles?
+
+- Com quantos outros IPs o IP da interface capturada interagiu?
