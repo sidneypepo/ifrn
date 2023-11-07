@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# ifrn/2023.2/programacao_para_redes/04_socket_http/exemplo_02_get_html.py
+# ifrn/2023.2/programacao_para_redes/04_socket_http/exemplo_05_download_image.py
 # Copyright (C) 2023  Sidney Pedro
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,20 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-import socket, sys
+import socket
 
-# --------------------------------------------------
-PORT        = 80
-CODE_PAGE   = 'utf-8'
-BUFFER_SIZE = 256
+# url_host    = 'httpbin.org'
+# url_image   = '/image/png'
+# url_host    = "aquitemremedio.prefeitura.sp.gov.br"
+# url_image   = "/assets/img/logo/logo-prefeitura-sp-v2.png"
+url_host    = "www.bancocn.com"
+url_image   = "/assets/me2.jpg"
+
+url_request = f'GET {url_image} HTTP/1.1\r\nHOST: {url_host}\r\n\r\n' 
+
+HOST_PORT   = 80
+BUFFER_SIZE = 1024
 CL_SIZE     = len("Content-Length: ")
-# --------------------------------------------------
-
-# host = input('\nInforme o nome do HOST ou URL do site: ')
-host = "aquitemremedio.prefeitura.sp.gov.br"
-# host = "gaia.cs.umass.edu"
-# host = "www.bancocn.com"
-
-tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def tamanho_resposta(resposta: bytes):
     if (b"Transfer-Encoding: chunked" in resposta):
@@ -51,37 +50,46 @@ def resposta_recebida(resposta: bytes):
     inicio_resposta = resposta.index(b"\r\n\r\n") + 4
     return len(resposta[inicio_resposta:])
 
-try:
-    tcp_socket.connect((host, PORT))
-except:
-    print(f'\nERRO.... {sys.exc_info()[0]}')
-    exit()
+sock_img = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock_img.connect((url_host, HOST_PORT))
+sock_img.sendall(url_request.encode())
 
-# tcp_socket.settimeout(5)
-requisicao = f"GET / HTTP/1.1\r\nHost: {host}\r\nAccept: text/html\r\n\r\n"
-try:
-    tcp_socket.sendall(requisicao.encode(CODE_PAGE))
-except:
-    print(f'\nERRO.... {sys.exc_info()[0]}')
-    exit()
-
-print('-'*50)
-resposta = b""
+print("Baixando a imagem...")
+# Montado a variável que armazenará os dados de retorno
+data_ret = b""
 tipo_tamanho = ""
 bytes_recebidos = 0
 total_bytes = 1
 while ((tipo_tamanho != "chunked" or resposta[-5:] != b"0\r\n\r\n") and bytes_recebidos != total_bytes):
-    nova_resposta = tcp_socket.recv(BUFFER_SIZE)
-    resposta += nova_resposta
-    # print(str(nova_resposta)[2:-1], end="")
-    print(nova_resposta.decode(CODE_PAGE), end="")
+    data = sock_img.recv(BUFFER_SIZE)
+    data_ret += data
 
     if (tipo_tamanho.isdecimal() and total_bytes > 1):
-        bytes_recebidos = resposta_recebida(resposta)
+        bytes_recebidos = resposta_recebida(data_ret)
     elif (tipo_tamanho.isdecimal()):
         total_bytes = int(tipo_tamanho)
     elif (tipo_tamanho == ""):
-        tipo_tamanho = tamanho_resposta(resposta)
+        tipo_tamanho = tamanho_resposta(data_ret)
 
-print('-'*50)
-tcp_socket.close()
+sock_img.close()
+
+# Obtendo o tamanho da imagem
+# img_size = -1
+# tmp = data_ret.split('\r\n'.encode())
+# for line in tmp:
+   # if 'Content-Length:'.encode() in line:
+      # img_size = int(line.split()[1])
+      # break
+print(f"Tamanho da Imagem: {total_bytes} bytes")
+
+# Separando o Cabeçalho dos Dados
+# delimiter = '\r\n\r\n'.encode()
+# position  = data_ret.find(delimiter)
+# headers   = data_ret[:position]
+image     = data_ret[-total_bytes:]
+
+# Salvando a imagem
+# print(image)
+file_output = open(f"image.{url_image[-3:]}", "wb")
+file_output.write(image)
+file_output.close()
