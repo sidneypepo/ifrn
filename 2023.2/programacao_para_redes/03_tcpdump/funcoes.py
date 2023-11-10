@@ -67,7 +67,7 @@ def mostrar_erro(ativar: bool, mensagem: str):
 # Função para receber e tratar dados informados pelo usuário
 def entrada_usuario(tipo: str, mensagem: str):
     # Incializando dado
-    dado = ""
+    dado = ''
 
     # Solitando dado com tipo informado, usando mensagem também
     # informada, enquanto não for digitado um dado válido e mostrando
@@ -92,9 +92,14 @@ def entrada_usuario(tipo: str, mensagem: str):
     # Retornando dado obtido
     return dado
 
+# Função para ler e organizar o cabeçalho de um arquivo PCAP
 def parser_pcap_header(dados: bytes):
+    # Definindo dicionário para armazenar campos do cabeçalho
     header = {}
 
+    # Lendo magic number e identificando endianness dos dados e se
+    # a precisão da captura dos pacotes está em micro ou nanosegundos
+    # e, se for inválido, retorna-se None
     header["magic_number"] = int.from_bytes(dados[0:4], "little")
     if (header["magic_number"] == 2712847316):
         endianness = "little"
@@ -111,11 +116,16 @@ def parser_pcap_header(dados: bytes):
     else:
         return None
 
+    # Obtendo versão do tcpdump utilizado para gravar o arquivo e, se
+    # for inválida, retorna-se None
     header["major_version"] = int.from_bytes(dados[4:6], endianness)
     header["minor_version"] = int.from_bytes(dados[6:8], endianness)
     if (header["major_version"] != 2 or header["minor_version"] != 4):
         return None
 
+    # Obtendo tamanho limite de informações de um pacote, protocolo de
+    # enlace da rede capturada e a quantidade de bytes extras ao final
+    # de um pacote
     header["snap_len"] = int.from_bytes(dados[16:20], endianness)
     header["link_type"] = int.from_bytes(dados[20:24], endianness) & 268435455
     if (endianness == "little"):
@@ -123,9 +133,12 @@ def parser_pcap_header(dados: bytes):
     else:
         header["fcs"] = int.from_bytes(dados[20:21], endianness) >> 5
 
+    # Retornando endianness, precisão de segundos e cabeçalho do PCAP
     return endianness, precision, header
 
+# Função para ler e organizar o cabeçalho de um pacote
 def parser_pacote_header(dados: bytes, endianness: str):
+    # Definindo dicionário e armazenando dados do cabeçalho do pacote
     header = {}
     header["timestamp"] = int.from_bytes(dados[0:4], endianness)
     header["precision"] = int.from_bytes(dados[4:8], endianness)
@@ -133,7 +146,10 @@ def parser_pacote_header(dados: bytes, endianness: str):
     header["original_length"] = int.from_bytes(dados[12:16], endianness)
     return header
 
+# Função para ler um arquivo PCAP
 def ler_pcap():
+    # Obtendo nome do arquivo e tentando abr-lo e, em caso de exceção,
+    # exibi-se um erro e retorna-se None
     nome_arquivo = entrada_usuario("str", "Digite o nome do arquivo: ")
     try:
         arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, "rb")
@@ -144,31 +160,42 @@ def ler_pcap():
             mostrar_erro(False, "Erro: não foi possível abrir o arquivo!")
             return None
 
+    # Lendo cabeçalho do arquivo PCAP e, se o retorno for None, um
+    # erro é apresentado e retorna-se None
     pcap_info = parser_pcap_header(arquivo.read(24))
     if (pcap_info == None):
         mostrar_erro(False, "Erro: arquivo corrompido!")
         arquivo.close()
         return None
 
+    # Armazenando endiannes, precisão de segundos e cabeçalho do PCAP
+    # e definindo lista para armazenar os pacotes
     endianness = pcap_info[0]
     precision = pcap_info[1]
     pcap_header = pcap_info[2]
     pacotes = []
     pacote = arquivo.read(16)
 
+    # Lendo todos os pacotes até que não hajam mais dados a serem
+    # lidos e, em caso de exceção, exibe-se um erro e retorna-se None
     try:
         while (len(pacote) != 0):
+            # Obtendo cabeçalho do pacote, lendo dados do pacote e armazenando
+            # o pacote à lista de pacotes
             pacote = parser_pacote_header(pacote, endianness)
-            pacote["data"] = arquivo.read(pacote["captured_length"])
+            pacote["data"] = arquivo.read(pacote["captured_length"] + pcap_header["fcs"])
             pacotes.append(pacote)
             pacote = arquivo.read(16)
     except:
         mostrar_erro(False, "Erro: não foi possível ler o arquivo!")
         return None
 
+    # Fechando arquivo e retornando endianness, precisão de segundos,
+    # cabeçalho PCAP e lista de pacotes lidos
     arquivo.close()
     return endianness, precision, pcap_header, pacotes
 
+# Função para retornar se o ano é ou não bissexto
 def ehbissexto(ano: int):
     if (not ehinteiro(str(ano))):
         return False
@@ -178,7 +205,10 @@ def ehbissexto(ano: int):
 
     return False
 
+# Função para converter UNIX timestamp em data e horário
 def segundos_data(timestamp: int, precision: int, tipo_precision: str, gmt: int = 0):
+    # Obtendo parte fracionária dos segundos, com base em seu tipo e,
+    # se não for um tipo válido, exibe-se um erro e retorna-se None
     if (tipo_precision == "micro" and ehinteiro(str(precision))):
         precision = f"{precision / 1000000:.6f}"[2:]
     elif (tipo_precision == "nano" and ehinteiro(str(precision))):
@@ -187,15 +217,24 @@ def segundos_data(timestamp: int, precision: int, tipo_precision: str, gmt: int 
         mostrar_erro(False, "Erro: precisão inválida!")
         return None
 
+    # Somando ou subtraindo horas com base no fuso-horário e, se o
+    # fuso ou timestamp informados não forem válidos, exibe-se um erro
+    # e retorna-se None
     if (ehinteiro(str(timestamp)) and ehinteiro(str(gmt))):
         timestamp += 60 * 60 * gmt
     else:
         mostrar_erro(False, "Erro: timestamp inválida!")
         return None
 
+    # Calculando quantidade de dias inteiros passados desde 1 de
+    # janeiro de 1970 (data de referência do UNIX timestamp) e
+    # segundos restantes passados até a data marcada
     dias = timestamp // (60 * 60 * 24)
     segundos = timestamp % (60 * 60 * 24)
 
+    # Navegando na quantidade de dias inteiros e somando os dias,
+    # meses e anos completos às suas respectivas variáveis,
+    # respeitando os anos bissextos
     ano = 1970
     mes = 1
     dia = 1
@@ -218,8 +257,11 @@ def segundos_data(timestamp: int, precision: int, tipo_precision: str, gmt: int 
             mes += 1
             dia = 1
 
+    # Calculando quantidade de horas e minutos inteiros passados até a
+    # data marcada e segundos restantes
     hora = segundos // (60 * 60)
     minuto = (segundos % (60 * 60)) // 60
     segundo = segundos % 60
 
+    # Retornando string com data completa
     return f"{ano:04d}-{mes:02d}-{dia:02d}_{hora:02d}:{minuto:02d}:{segundo:02d}.{precision}"

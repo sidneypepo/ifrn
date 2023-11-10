@@ -54,7 +54,7 @@ def ler_diretorio(nome_diretorio: str):
 # Função para converter bytes em string
 def bytes_para_string(dados: bytes, endianness: str):
     # Montando a string com base no endianness do arquivo
-    string = ""
+    string = ''
     if (endianness == "big"):
         for index in range(len(dados)):
             string += chr(dados[index])
@@ -62,7 +62,7 @@ def bytes_para_string(dados: bytes, endianness: str):
         for index in range(len(dados) - 1, -1, -1):
             string += chr(dados[index])
 
-    return string.replace('\x00', '')
+    return string.replace("\x00", '')
 
 # Função para converter bytes em lista de números fracionários
 def bytes_para_lista_unsigned_racional(dados: bytes, endianness: str):
@@ -94,7 +94,7 @@ def tratar_metadados(metadata: list, endianness: str, arquivo):
             metadata[index]["data_value"] = int.from_bytes(metadata[index]["data_value"], endianness)
             posicao = arquivo.tell()
             arquivo.seek(metadata[index]["data_value"] + TIFF_OFFSET, 0)
-            metadata[index]["data_value"] = arquivo.read(metadata[index]["number_components"]).decode(CHARSET).rstrip('\x00')
+            metadata[index]["data_value"] = arquivo.read(metadata[index]["number_components"]).decode(CHARSET).rstrip("\x00")
             arquivo.seek(posicao, 0)
         else:
             metadata[index]["data_value"] = bytes_para_string(metadata[index]["data_value"], endianness)
@@ -124,7 +124,7 @@ def tratar_metadados_gps(metadata: list, endianness: str, arquivo):
             metadata[index]["data_value"] = int.from_bytes(metadata[index]["data_value"], endianness)
             posicao = arquivo.tell()
             arquivo.seek(metadata[index]["data_value"] + TIFF_OFFSET, 0)
-            metadata[index]["data_value"] = arquivo.read(metadata[index]["number_components"]).decode(CHARSET).rstrip('\x00')
+            metadata[index]["data_value"] = arquivo.read(metadata[index]["number_components"]).decode(CHARSET).rstrip("\x00")
             arquivo.seek(posicao, 0)
         else:
             metadata[index]["data_value"] = bytes_para_string(metadata[index]["data_value"], endianness)
@@ -278,7 +278,7 @@ def main():
         largura = ler_valor_tag(metadata, "ImageWidth")
         altura = ler_valor_tag(metadata, "ImageLength")
         if (largura != None and altura != None):
-            print(f"Largura X Altura da imagem              : {largura} X {altura}")
+            print(f"Largura | Altura da imagem              : {largura} | {altura}")
 
         # Apresentando fabricante da câmera
         fabricante = ler_valor_tag(metadata, "Make")
@@ -304,7 +304,7 @@ def main():
         if (latitude_ref != None and latitude != None and longitude_ref != None and longitude != None):
             latitude_gps = converter_gps(latitude, latitude_ref)
             longitude_gps = converter_gps(longitude, longitude_ref)
-            print(f"Latitude X Longitude do local da captura: {latitude_gps:.7f} X {longitude_gps:.7f}")
+            print(f"Latitude | Longitude do local da captura: {latitude_gps:.7f} | {longitude_gps:.7f}")
 
             obter_cidade(latitude_gps, longitude_gps)
 

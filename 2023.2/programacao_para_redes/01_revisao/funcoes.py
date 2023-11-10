@@ -98,7 +98,7 @@ def mostrar_erro(ativar: bool, mensagem: str):
 # Função para receber e tratar dados informados pelo usuário
 def entrada_usuario(tipo: str, mensagem: str):
     # Incializando dado
-    dado = ""
+    dado = ''
 
     # Solitando dado com tipo informado, usando mensagem também
     # informada, enquanto não for digitado um dado válido e mostrando
@@ -392,7 +392,7 @@ def ler_json_cartola():
             return None
 
     # Convertendo lista de linhas do arquivo lido para string
-    conteudo = ""
+    conteudo = ''
     for index in range(len(arquivo[1])):
         conteudo += arquivo[1][index]
 
