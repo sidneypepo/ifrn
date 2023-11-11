@@ -75,17 +75,17 @@ def entrada_usuario(tipo: str, mensagem: str):
     if (tipo.lower() == "nat"):
         while (not ehnatural(dado)):
             dado = input(mensagem)
-            mostrar_erro(ehnatural(dado), "Erro: Digite um número natural!\n")
+            mostrar_erro(ehnatural(dado), "Erro: digite um número natural!\n")
         dado = int(dado)
     elif (tipo.lower() == "int"):
         while (not ehinteiro(dado)):
             dado = input(mensagem)
-            mostrar_erro(ehinteiro(dado), "Erro: Digite um número inteiro!\n")
+            mostrar_erro(ehinteiro(dado), "Erro: digite um número inteiro!\n")
         dado = int(dado)
     elif (tipo.lower() == "str"):
         while (not len(dado) > 0):
             dado = input(mensagem)
-            mostrar_erro((len(dado) > 0), "Erro: Digite uma string válida!\n")
+            mostrar_erro((len(dado) > 0), "Erro: digite uma string válida!\n")
     else:
         dado = None
 
@@ -152,10 +152,10 @@ def ler_pcap():
     # exibi-se um erro e retorna-se None
     nome_arquivo = entrada_usuario("str", "Digite o nome do arquivo: ")
     try:
-        arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, "rb")
+        arquivo = open(f"{DIRETORIO_ATUAL}/{nome_arquivo}", "rb")
     except:
         try:
-            arquivo = open(DIRETORIO_ATUAL + "/tcp_dump/" + nome_arquivo, "rb")
+            arquivo = open(f"{DIRETORIO_ATUAL}/tcp_dump/{nome_arquivo}", "rb")
         except:
             mostrar_erro(False, "Erro: não foi possível abrir o arquivo!")
             return None

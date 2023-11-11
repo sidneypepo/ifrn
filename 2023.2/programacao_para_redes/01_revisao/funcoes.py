@@ -22,8 +22,10 @@
 import os, random, json
 
 # Armazenando caminho completo do diretório desse programa para
-# funções que leem ou escrevem arquivos
+# funções que leem ou escrevem arquivos e codificação de
+# caracteres
 DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
+CHARSET = "utf-8"
 
 # Armazenando possíveis esquemas do Cartola FC
 ESQUEMAS = {
@@ -106,22 +108,22 @@ def entrada_usuario(tipo: str, mensagem: str):
     if (tipo.lower() == "nat"):
         while (not ehnatural(dado)):
             dado = input(mensagem)
-            mostrar_erro(ehnatural(dado), "Erro: Digite um número natural!\n")
+            mostrar_erro(ehnatural(dado), "Erro: digite um número natural!\n")
         dado = int(dado)
     elif (tipo.lower() == "int"):
         while (not ehinteiro(dado)):
             dado = input(mensagem)
-            mostrar_erro(ehinteiro(dado), "Erro: Digite um número inteiro!\n")
+            mostrar_erro(ehinteiro(dado), "Erro: digite um número inteiro!\n")
         dado = int(dado)
     elif (tipo.lower() == "float"):
         while (not ehfloat(dado)):
             dado = input(mensagem)
-            mostrar_erro(ehfloat(dado), "Erro: Digite um número fracionário!\n")
+            mostrar_erro(ehfloat(dado), "Erro: digite um número fracionário!\n")
         dado = float(dado)
     elif (tipo.lower() == "str"):
         while (not len(dado) > 0):
             dado = input(mensagem)
-            mostrar_erro((len(dado) > 0), "Erro: Digite uma string válida!\n")
+            mostrar_erro((len(dado) > 0), "Erro: digite uma string válida!\n")
     else:
         dado = None
 
@@ -150,7 +152,7 @@ def salvar_lista(nome_lista: list, nome_arquivo: str = "valores_nao_ordenados.tx
     # Tentando abrir e escrever a lista no arquivo informado e, em
     # caso de erro, retorna-se False
     try:
-        arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'w')
+        arquivo = open(f"{DIRETORIO_ATUAL}/{nome_arquivo}", 'w')
 
         for index in range(len(nome_lista)):
             arquivo.write(f"{nome_lista[index]}\n")
@@ -162,11 +164,11 @@ def salvar_lista(nome_lista: list, nome_arquivo: str = "valores_nao_ordenados.tx
     return True
 
 # Função para ler um arquivo
-def ler_arquivo(nome_arquivo: str, ignorar_strings: bool = True, encode: str = "utf-8"):
+def ler_arquivo(nome_arquivo: str, ignorar_strings: bool = True, charset: str = CHARSET):
     # Tentando abrir o arquivo informado e, em caso de erro,
     # retorna-se False e None
     try:
-        arquivo = open(DIRETORIO_ATUAL + '/' + nome_arquivo, 'r', encoding=encode)
+        arquivo = open(f"{DIRETORIO_ATUAL}/{nome_arquivo}", 'r', encoding=charset)
     except:
         return False, None
 

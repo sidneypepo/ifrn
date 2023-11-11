@@ -1,0 +1,26 @@
+#+title: README.org
+#+author: Sidney Pedro
+#+date: [2023-11-10 Fri]
+
+* Estudo dirigido 03 - NetScan
+Na URL https://pt.wikipedia.org/wiki/Lista_de_portas_dos_protocolos_TCP_e_UDP são listadas as portas UDP e TCP relativas a cada serviço.
+
+Com base na listagem das portas 0 a 995 (gerem um arquivo de input contendo a listagem das portas, o seu respectivo protocolo e sua descrição), desenvolva um programa para verificar em um determinado
+HOST (a ser solicitado pelo programa) quais portas respondem ou não a conexão a ser estabelecida de acordo com o seu respectivo protocolo (TCP ou UDP). Note que determinadas portas tanto aceitam conexão UDP quanto TCP.
+
+Vocês tanto poderão utilizar o método ~connect()~ quanto o método ~connect_ex()~ da classe Socket.
+
+O output será na tela e deverá estar no seguinte formato:
+
+#+begin_src text
+Porta NNNNN: Protocolo: PPPPP: (DDDDD) Status: YYYYY
+#+end_src
+
+Onde:
+- ~NNNNN~ será o número da porta que está sendo testada;
+
+- ~PPPPP~ será o protocolo (UDP ou TCP);
+
+- ~DDDDD~ será a descrição da porta;
+
+- ~YYYYY~ será o status: Responde (Aberta) ou Não Responde (Fechada).

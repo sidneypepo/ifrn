@@ -112,10 +112,10 @@ def main():
     inicio_captura = funcoes.segundos_data(pacotes[0]["timestamp"], pacotes[0]["precision"], precision, -3)
     fim_captura = funcoes.segundos_data(pacotes[-1]["timestamp"], pacotes[-1]["precision"], precision, -3)
     if (inicio_captura != None and fim_captura != None):
-        print(f"Início | fim captura                : {inicio_captura} | {fim_captura}")
+        print(f"Início | Fim captura                : {inicio_captura} | {fim_captura}")
 
     # Apresentando tamanho de maior pacote
-    print(f"Tamanho maior pacote (em bytes)     : {maior_pacote}")
+    print(f"Tamanho do maior pacote (em bytes)  : {maior_pacote}")
 
     # Apresentando quantidade de pacotes parcialmente capturados
     print(f"Pacotes incompletos capturados      : {incompletos}")

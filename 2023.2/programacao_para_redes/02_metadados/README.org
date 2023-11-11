@@ -2,7 +2,7 @@
 #+author: Sidney Pedro
 #+date: [2023-11-01 Wed]
 
-* Estudo dirigido 01 - Metadados de Imagens
+* Estudo dirigido 01 - Metadados de imagens
 Faça um programa em Python que pergunte ao usuário o nome de um diretório e, para cada um dos arquivos nele presentes identifique aqueles se são imagens JPEG com informação de EXIF (iniciam com os bytes ~FF D8 FF E1~). Para cada arquivo JPEG responda (se o dado existe):
 - A largura e a altura da foto;
 
