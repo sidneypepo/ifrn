@@ -1,0 +1,13 @@
+#+title: README.org
+#+author: Sidney Pedro
+#+date: [2023-11-16 Thu]
+
+* Estudo dirigido 05 - Universal Image Downloader
+Desenvolver um programa, utilizando a biblioteca SOCKETS que atenda as seguintes especificações:
+- O programa deverá solicitar a URL completa de uma imagem na WEB;
+
+- A partir da URL, separar a parte correspondente ao HOST da parte correspondente ao IMAGE;
+
+- Obter o nome do arquivo da imagem a partir da URL informada;
+
+- Efetuar o download da imagem na mesma pasta do programa, salvando-a com o mesmo nome que ela possui na URL

@@ -32,7 +32,6 @@ Número da porta;Protocolo;Descrição
 70;TCP;Gopher (Protocolo para indexar repositórios)
 79;TCP;Finger protocol (Serviço finger para informações de contato do usuário)
 80;TCP;HTTP (HyperText Transfer Protocol - Procolo de transferência de HiperTexto) - usada para transferir páginas WWW
-80;TCP;HTTP Alternate (HyperText Transfer Protocol - Protocolo de transferência de HiperTexto)
 81;TCP;Skype protocol
 81;TCP;Torpark - Onion routing ORport
 82;UDP;Torpark - Control Port

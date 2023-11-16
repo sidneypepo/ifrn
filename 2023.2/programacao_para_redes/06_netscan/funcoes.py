@@ -113,24 +113,40 @@ def dividir_string(string: str, separador: str = ';'):
 
 def testar_porta(ip: str, informacoes: str):
     informacoes = dividir_string(informacoes)
+    timeout = 1
 
-    if ("TCP" in informacoes[1]):
+    protocolo = "TCP"
+    if (protocolo in informacoes[1]):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        protocolo = "TCP"
-    else:
+
+        sock.settimeout(timeout)
+        conexao = sock.connect_ex((ip, int(informacoes[0])))
+        if (conexao == 0):
+            status_conexao = "\033[1;32mAberta\033[0m"
+        else:
+            status_conexao = "\033[1;31mFechada\033[0m"
+
+        print(f"Porta: {informacoes[0]}; Protocolo: TCP ({informacoes[2]}); Status: {status_conexao}")
+        sock.close()
+
+    protocolo = "UDP"
+    if (protocolo in informacoes[1]):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        protocolo = "UDP"
 
-    sock.settimeout(2)
-    conexao = sock.connect_ex((ip, int(informacoes[0])))
-    if (conexao == 0 and protocolo == "TCP"):
-        status_conexao = "Aberta"
-    elif (conexao == 0 and protocolo == "UDP"):
-        status_conexao = "Desconhecido/Não responde"
-    else:
-        status_conexao = "Fechada"
+        sock.settimeout(timeout)
+        sock.connect_ex((ip, int(informacoes[0])))
+        sock.sendall("AAAA".encode(CHARSET))
+        try:
+            teste_udp = sock.recv(1)
+        except:
+            teste_udp = b""
 
-    print(f"Porta: {informacoes[0]}; Protocolo(s): {informacoes[1]} ({informacoes[2]}); Status: {status_conexao}")
+        if (teste_udp == b""):
+            status_conexao = "\033[1;31mFechada\033[0m"
+        else:
+            status_conexao = "\033[1;32mAberta\033[0m"
 
-    sock.close()
+        print(f"Porta: {informacoes[0]}; Protocolo: UDP ({informacoes[2]}); Status: {status_conexao}")
+        sock.close()
+
     return
