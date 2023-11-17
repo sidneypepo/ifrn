@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# ifrn/2023.2/programacao_para_redes/10_ultimate_file_downloader/ufd.py
+# ifrn/2023.2/programacao_para_redes/10_universal_http_downloader/uhd.py
 # Copyright (C) 2023  Sidney Pedro
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,23 @@
 import funcoes
 
 def main():
+    endereco = funcoes.entrada_usuario("addr", "Digite o endereço completo do arquivo: ")
+
+    protocolo = endereco[0]
+    host = endereco[1]
+    caminho = endereco[2]
+    nome_arquivo = caminho[caminho.rfind('/'):]
+
+    if (protocolo == "http://" or protocolo == ''):
+        print("\nBaixando arquivo...")
+        arquivo = funcoes.obter_arquivo(host, 80, caminho)
+        if (len(arquivo) > 0):
+            print("Salvando arquivo...")
+            funcoes.salvar_arquivo(arquivo, nome_arquivo)
+        else:
+            funcoes.mostrar_erro((len(arquivo) > 0), "Erro: não foi possível baixar o arquivo!")
+    else:
+        funcoes.mostrar_erro(False, "Erro: protocolo não suportado/implementado!")
 
     return
 

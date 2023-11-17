@@ -26,6 +26,8 @@ import socket
 # url_image   = "/assets/img/logo/logo-prefeitura-sp-v2.png"
 url_host    = "www.bancocn.com"
 url_image   = "/assets/me2.jpg"
+url_host = "redecanais.zip"
+url_image = "/uploads/custom-logo.png"
 
 url_request = f'GET {url_image} HTTP/1.1\r\nHOST: {url_host}\r\n\r\n' 
 
@@ -51,7 +53,8 @@ def resposta_recebida(resposta: bytes):
     return len(resposta[inicio_resposta:])
 
 sock_img = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock_img.connect((url_host, HOST_PORT))
+X = sock_img.connect_ex((url_host, HOST_PORT))
+print("XXXXXXXXXXXXXXX", X)
 sock_img.sendall(url_request.encode())
 
 print("Baixando a imagem...")
@@ -60,7 +63,7 @@ data_ret = b""
 tipo_tamanho = ""
 bytes_recebidos = 0
 total_bytes = 1
-while ((tipo_tamanho != "chunked" or resposta[-5:] != b"0\r\n\r\n") and bytes_recebidos != total_bytes):
+while ((tipo_tamanho != "chunked" or data_ret[-5:] != b"0\r\n\r\n") and bytes_recebidos != total_bytes):
     data = sock_img.recv(BUFFER_SIZE)
     data_ret += data
 
@@ -73,6 +76,9 @@ while ((tipo_tamanho != "chunked" or resposta[-5:] != b"0\r\n\r\n") and bytes_re
 
 sock_img.close()
 
+if (data_ret[:12] == b"HTTP/1.1 301"):
+    print("XXX")
+
 # Obtendo o tamanho da imagem
 # img_size = -1
 # tmp = data_ret.split('\r\n'.encode())
@@ -80,6 +86,7 @@ sock_img.close()
    # if 'Content-Length:'.encode() in line:
       # img_size = int(line.split()[1])
       # break
+print(data_ret)
 print(f"Tamanho da Imagem: {total_bytes} bytes")
 
 # Separando o Cabeçalho dos Dados

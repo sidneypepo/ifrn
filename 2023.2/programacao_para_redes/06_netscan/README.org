@@ -1,6 +1,6 @@
 #+title: README.org
 #+author: Sidney Pedro
-#+date: [2023-11-10 Fri]
+#+date: [2023-11-16 Thu]
 
 * Estudo dirigido 03 - NetScan
 Na URL https://pt.wikipedia.org/wiki/Lista_de_portas_dos_protocolos_TCP_e_UDP são listadas as portas UDP e TCP relativas a cada serviço.
@@ -13,7 +13,7 @@ Vocês tanto poderão utilizar o método ~connect()~ quanto o método ~connect_e
 O output será na tela e deverá estar no seguinte formato:
 
 #+begin_src text
-Porta NNNNN: Protocolo: PPPPP: (DDDDD) Status: YYYYY
+Porta: NNNNN Protocolo: PPPPP (DDDDD) Status: YYYYY
 #+end_src
 
 Onde:
