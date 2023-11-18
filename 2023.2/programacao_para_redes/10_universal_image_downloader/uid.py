@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# ifrn/2023.2/programacao_para_redes/10_universal_http_downloader/uhd.py
+# ifrn/2023.2/programacao_para_redes/10_universal_image_downloader/uid.py
 # Copyright (C) 2023  Sidney Pedro
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,14 +22,21 @@
 import funcoes
 
 def main():
-    endereco = funcoes.entrada_usuario("addr", "Digite o endereço completo do arquivo: ")
+    # Obtendo endereço do arquivo do usuário
+    endereco = funcoes.entrada_usuario("addr", "Digite o endereço completo da imagem (também pode ser um arquivo): ")
 
+    # Separando protocolo, host e caminho do endereço do arquivo
     protocolo = endereco[0]
     host = endereco[1]
     caminho = endereco[2]
     nome_arquivo = caminho[caminho.rfind('/'):]
 
+    # Se não houver protocolo ou se o protocolo informado for HTTP, o
+    # arquivo tentará ser baixado e salvo, senão, exibe-se um erro
     if (protocolo == "http://" or protocolo == ''):
+        # Apresentando tentativa de baixar o arquivo e tentando obter
+        # dados do arquivo. Se houverem dados, o arquivo tenta-se ser
+        # salvo, senão, exibe-se um erro
         print("\nBaixando arquivo...")
         arquivo = funcoes.obter_arquivo(host, 80, caminho)
         if (len(arquivo) > 0):

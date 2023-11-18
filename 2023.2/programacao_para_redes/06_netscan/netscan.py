@@ -22,11 +22,15 @@
 import funcoes
 
 def main():
+    # Lendo arquivo de dados e, se não for possível, exibe-se um erro
+    # e o programa é finalizado
     portas = funcoes.ler_arquivo("portas.csv", False)
     if (not portas[0]):
         funcoes.mostrar_erro(False, "Erro: não foi possível abrir o arquivo de informações!")
         return
 
+    # Obtendo endereço IP do host e testando cada uma das portas
+    # presentes no arquivo lido anteriormente
     ip = funcoes.entrada_usuario("ip", "Digite o nome do host a ser escaneado (domínio ou IP): ")
     print()
     for index in range(1, len(portas[1])):

@@ -49,7 +49,7 @@ def ler_arquivo(nome_arquivo: str, ignorar_strings: bool = True, charset: str = 
     arquivo.close()
     return True, lista
 
-# Função para obter IP de host
+# Função para obter o IP de um host
 def obter_ip(host: str):
     try:
         ip = socket.gethostbyname(host)
@@ -111,14 +111,21 @@ def dividir_string(string: str, separador: str = ';'):
     # Retornando string dividia
     return string_dividida
 
+# Função para testar se uma porta está aberta ou fechada
 def testar_porta(ip: str, informacoes: str):
+    # Obtendo informações da porta a ser testada e definindo timeout
+    # para um segundo
     informacoes = dividir_string(informacoes)
     timeout = 1
 
+    # Testando se a porta testada está disponível a conexões TCP e, se
+    # estiver, testa-se o mesmo
     protocolo = "TCP"
     if (protocolo in informacoes[1]):
+        # Montando socket, estabelecendo timeout, conectando e, se o
+        # retorno da conexão for zero, significa que a conexão foi
+        # estabelecida e a porta está aberta
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
         sock.settimeout(timeout)
         conexao = sock.connect_ex((ip, int(informacoes[0])))
         if (conexao == 0):
@@ -126,26 +133,35 @@ def testar_porta(ip: str, informacoes: str):
         else:
             status_conexao = "\033[1;31mFechada\033[0m"
 
+        # Apresentando informações e status da porta para o protocolo TCP
+        # e fechando socket
         print(f"Porta: {informacoes[0]}; Protocolo: TCP ({informacoes[2]}); Status: {status_conexao}")
         sock.close()
 
+    # Testando se a porta testada está disponível a conexões UDP e, se
+    # estiver, testa-se o mesmo
     protocolo = "UDP"
     if (protocolo in informacoes[1]):
+        # Montando socket, estabelecendo timeout, conectando, enviando
+        # bytes e tentando receber um retorno
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
         sock.settimeout(timeout)
         sock.connect_ex((ip, int(informacoes[0])))
         sock.sendall("AAAA".encode(CHARSET))
         try:
             teste_udp = sock.recv(1)
         except:
-            teste_udp = b""
+            teste_udp = b''
 
-        if (teste_udp == b""):
+        # Se houve retorno dos bytes enviados, significa que a porta está
+        # aberta
+        if (teste_udp == b''):
             status_conexao = "\033[1;31mFechada\033[0m"
         else:
             status_conexao = "\033[1;32mAberta\033[0m"
 
+        # Apresentando informações e status da porta para o protocolo TCP
+        # e fechando socket
         print(f"Porta: {informacoes[0]}; Protocolo: UDP ({informacoes[2]}); Status: {status_conexao}")
         sock.close()
 

@@ -150,7 +150,7 @@ Número da porta;Protocolo;Descrição
 711;TCP;TDP, Tag Distribution Protocol (Protocolo de distribuição de marcadores)
 712;TCP;TBRPF, Topology Broadcast based on Reverse-Path Forwarding
 720;TCP;SMQP, Simple Message Queue Protocol (Protocolo de simples mensagem em fila)
-749;TCP e UDP; kerberos-adm, Kerberos administration
+749;TCP e UDP;kerberos-adm, Kerberos administration
 750;UDP;Kerberos version IV
 782;TCP;Conserver serial-console management server
 829;TCP;CMP (Certificate Management Protocol)
