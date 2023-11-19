@@ -116,6 +116,35 @@ def tamanho_resposta_recebida(resposta: bytes):
 
     return 0
 
+# Função para extrair bytes úteis de chunks
+def extrair_chunks(resposta: bytes):
+    # Removendo cabeçalho da resposta HTTP
+    inicio_resposta = resposta.index(b"\r\n\r\n") + 4
+    resposta = resposta[inicio_resposta:]
+
+    # Definindo uma variável para armazenar o tamanho de cada chunk e
+    # uma para armazenar a resposta final extraída
+    tamanho_chunk = -1
+    resposta_final = b''
+
+    # Enquanto o tamanho da última chunk for diferente de zero,
+    # obtem-se a posição da quebra de linha pós tamanho da chunk,
+    # então a string que contém o tamanho da chunk é lida e convertida
+    # para valor inteiro, então a quantidade de bytes da chunk,
+    # especificados pelo tamanho da mesma, são armazenados na variável
+    # de resposta final e a resposta original remove os bytes da chunk
+    # anterior
+    while (tamanho_chunk != 0):
+        fim_tamanho_chunk = resposta.index(b"\r\n")
+        tamanho_chunk = int(resposta[:fim_tamanho_chunk], 16)
+        inicio_chunk = fim_tamanho_chunk + 2
+        fim_chunk = inicio_chunk + tamanho_chunk
+        resposta_final += resposta[inicio_chunk:fim_chunk]
+        resposta = resposta[fim_chunk + 2:]
+
+    # Retornando resposta final extraída
+    return resposta_final
+
 # Função para obter um arquivo via HTTP
 def obter_arquivo(host: str, porta: int, caminho: str):
     # Montando socket, estabelecendo conexão e, se o status da mesma
@@ -174,7 +203,7 @@ def obter_arquivo(host: str, porta: int, caminho: str):
 
     # Retornando bytes úteis
     if (tipo_tamanho == "chunked"):
-        return resposta[resposta.index(b"\r\n\r\n") + 4:-5]
+        return extrair_chunks(resposta)
     else:
         return resposta[-total_bytes:]
 
