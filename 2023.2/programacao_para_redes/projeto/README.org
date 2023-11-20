@@ -1,0 +1,78 @@
+#+title: README.org
+#+author: Sidney Pedro
+#+date: [2023-11-20 Mon]
+
+* Projeto
+Projeto final da disciplina Programação para Redes
+
+** Instruções
+Fazer uma aplicação cliente/servidor com as seguintes características:
+- A conexão entre o cliente e o servidor será através de um socket (UDP ou TCP);
+
+- A aplicação cliente (agente) deverá executar as seguintes operações:
+  + Ao ser executado, o cliente deverá informar ao servidor que ele está on-line, informando o nome do HOST do cliente, seu IP e usuário logado (obter o usuário do computador);
+
+  + O cliente deverá ser executado em segundo plano, ou seja, ao ser executado no terminal ele é carregado na memória e libera o terminal para o usuário;
+
+  + Caso o servidor não esteja on-line, o cliente deverá ficar rodando em segundo plano testando a cada tempo pré-determinado se o servidor voltou a ficar on-line;
+
+  + Uma vez que o agente esteja na memória, ele não deve permitir que uma segunda instância dele seja carregado na memória;
+
+  + Deverá haver uma forma para o próprio agente se remover da memória;
+
+  + Enquanto estiver na memória o agente deverá responder a requisições oriundas do servidor;
+
+- A aplicação servidora deverá executar as seguintes operações
+  + O servidor deverá permitir conexão oriunda de vários clientes (agentes) simultaneamente;
+
+  + Deverá haver um mecanismo no servidor para ele gerenciar as conexões ativas e detectar quando um cliente ficar off-line;
+
+  + O servidor deverá ser executado em segundo plano, ou seja, ao ser executado no terminal ele é carregado na memória e libera o terminal para o usuário;
+
+  + Uma vez que o servidor esteja na memória, ele não deve permitir que uma segunda instância dele seja carregado na memória;
+
+  + Deverá haver uma forma para o próprio servidor se remover da memória;
+
+  + Deverá ser implementado um comando na aplicação servidora para solicitar aos agentes informações do hardware onde estão sendo executados (CPU, memória, disco, Sistema Operacional, ...).
+    * Esse comando será chamado através de um bot no Telegram;
+
+    * Não devem ser utilizadas bibliotecas de terceiros neste item;
+
+  + Deverá ser implementado um comando na aplicação servidora para solicitar aos agentes a lista de programas instalados no computador. Nesse item deverá ser verificado tanto para agentes sendo executados em Windows quanto em Linux:
+    * Esse comando será chamado através de um bot no Telegram;
+
+    * Não devem ser utilizadas bibliotecas de terceiros neste item;
+
+  + Deverá ser implementado um comando na aplicação servidora para solicitar aos agentes o histórico de navegação. Implemente para ler os históricos do Chrome, Firefox, Microsoft Edge, Opera e Safari. Nesse item deverá ser verificado tanto para agentes sendo executados em Windows quanto em Linux:
+    * Esse comando será chamado através de um bot no Telegram;
+
+  + Deverá ser implementado um comando na aplicação servidora para solicitar aos agentes informações detalhadas do usuário que está logado (podem incluir dados como o diretório inicial (home directory), identificador de usuário (UID), grupo principal, grupo(s) secundário(s), shell padrão, entre outros) . Nesse item deverá ser verificado tanto para agentes sendo executados em Windows quanto em Linux:
+    * Esse comando será chamado através de um bot no Telegram;
+
+    * Não devem ser utilizadas bibliotecas de terceiros neste item;
+
+  + Deverá ser implementado um comando na aplicação servidora que liste os agentes que estão on-line trazendo informações como: IP, nome do HOST, usuário logado e o tempo que está que o agente está on-line:
+    * Esse comando será chamado através de um bot no Telegram;
+
+    * Não devem ser utilizadas bibliotecas de terceiros neste item;
+
+- O diagrama a seguir demonstra como será a comunicação entre as partes do projeto:
+  #+begin_center
+  #+html: <p align="center"><img src="res/diagrama.png" alt="Diagrama" height="400"></p>
+  #+end_center
+
+** Documentação
+*** Tipo de socket
+TCP será utilizado, devido à confiabilidade da entrega de pacotes, fundamental para um adequado comando e controle das máquinas remotas
+
+*** Comandos do C2 (via Telegram)
+| Comando        | Descrição                                                                                           |
+|----------------+-----------------------------------------------------------------------------------------------------|
+| ~./c2 -h~      | Exibir ajuda (comandos disponíveis, exemplos, etc.)                                                 |
+| ~./c2 -q~      | Finalizar daemon do servidor                                                                        |
+| ~./c2 -d <ID>~ | Obter lista de informações de hardware de uma ou todas as máquinas conectadas                       |
+| ~./c2 -p <ID>~ | Obter lista programas instalados em uma ou todas as máquinas conectadas                             |
+| ~./c2 -b <ID>~ | Obter histórico de navegação do(s) navegador(es) presente(s) em uma ou todas as máquinas conectadas |
+| ~./c2 -u <ID>~ | Obter informações do usuário logado de uma ou todas as máquinas conectadas                          |
+| ~./c2 -l~      | Obter lista de clientes conectados (ID's, endereços IP, tempo online, etc.)                         |
+| ~./c2 -s <ID>~ | Reservado                                                                                           |
