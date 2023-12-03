@@ -18,7 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-# Importando funções
+# Importando bibliotecas
 import os, random, json
 
 # Armazenando caminho completo do diretório desse programa para
