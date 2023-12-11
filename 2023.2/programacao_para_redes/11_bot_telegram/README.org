@@ -1,0 +1,30 @@
+#+title: README.org
+#+author: Sidney Pedro
+#+date: [2023-12-10 Sun]
+
+* Atividade avaliativa 04 - Bot Telegram
+Crie um programa que funciona como bot do Telegram, criado usando o aplicativo no canal BotFather.
+
+/IMPORTANTE/: use apenas a API de sockets – *NÃO* use API de terceiros para acesso ao Telegram.
+
+O usuário deve se cadastrar no seu bot (usando o nome escolhido) que deve oferecer pelo menos cinco serviços. As conversas entre um usuário e o bot devem ser individualizadas, por óbvio; assim um chat entre um usuário e o bot não deve ser vista por outros usuários do bot.
+
+Exemplos de bot (pense em outros):
+- Oferecer informações de monitoramento da rede onde o bot se encontra:
+  + */info* – informações básicas sobre a rede (ip, máscara, gateway);
+
+  + */ping* – tempo médio de ping (quatro pacotes) entre a máquina do bot e seu gateway;
+
+  + */active ip* – informa se o ip está respondendo;
+
+  + */service ip:port* – informa se há um serviço escutando no ip e porta recebidos;
+
+  + */dns* – informa o servidor de DNS da máquina do bot;
+
+  + */map* – lista as máquinas e portas ativas no segmento de rede local do bot.
+
+- Download de imagens na internet:
+  + */download url_image* – download de uma imagem da internet no servidor.
+
+- Listar as portas que estão abertas em um determinado host:
+  + */scan host* – verifica o status das portas de um determinado host. Informa apenas as que estão respondendo.
