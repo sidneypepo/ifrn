@@ -114,9 +114,9 @@ def dividir_string(string: str, separador: str = ';'):
 # Função para testar se uma porta está aberta ou fechada
 def testar_porta(ip: str, informacoes: str):
     # Obtendo informações da porta a ser testada e definindo timeout
-    # para um segundo
+    # para meio segundo
     informacoes = dividir_string(informacoes)
-    timeout = 1
+    timeout = 0.5
 
     # Testando se a porta testada está disponível a conexões TCP e, se
     # estiver, testa-se o mesmo
@@ -160,7 +160,7 @@ def testar_porta(ip: str, informacoes: str):
         else:
             status_conexao = "\033[1;32mAberta\033[0m"
 
-        # Apresentando informações e status da porta para o protocolo TCP
+        # Apresentando informações e status da porta para o protocolo UDP
         # e fechando socket
         print(f"Porta: {informacoes[0]}; Protocolo: UDP ({informacoes[2]}); Status: {status_conexao}")
         sock.close()

@@ -18,68 +18,43 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-import requests
-
-API_KEY = "6308631803:AAEArbA5TdVhJRtv1xofzjgkWIfpCp-KWMk" # @progredes_dummy_bot
-TELEGRAM_API = f"https://api.telegram.org/bot{API_KEY}"
+# Importando funções
+import requisicoes
 
 def main():
-    latest_date = 0
+    print("Para acessar o bot, pesquise @progredes_dummy_bot ou clique no link direto: https://t.me/progredes_dummy_bot")
+    print("Para encerrar o bot, pressione Ctrl-C\n")
 
-    while (True):
+    # Loop de funcionamento do bot
+    continuar = True
+    latest_update_id = 0
+    while (continuar):
+        # Obtendo última atualização e mensagem e, em caso de exceção,
+        # tenta-se novamente
         try:
-            updates = requests.get(TELEGRAM_API + "/getUpdates")
+            latest_update_id, latest_message = requisicoes.obter_atualizacoes(latest_update_id)
         except KeyboardInterrupt:
-            raise KeyboardInterrupt()
+            continuar = False
+            continue
         except:
             continue
 
-        retorno = updates.json()
-        if (updates.status_code == 409):
-            print("Error: another connection is being established! Trying again...")
-            continue
-        elif (updates.status_code != 200):
-            return
-        elif (len(retorno["result"]) == 0):
+        # Se não houver novas mensagens, volta-se ao início
+        if (latest_message == None):
             continue
 
+        # Interpretando mensagem e salvando última atalização
         try:
-            arquivo = open("timestamp.txt", "r")
+            requisicoes.interpretar_mensagem(latest_message)
+            requisicoes.salvar_update_id(latest_update_id)
         except:
-            arquivo = open("timestamp.txt", "w")
-            arquivo.write(f"{latest_date}\n")
-            arquivo.close()
-
-            arquivo = open("timestamp.txt", "r")
-
-        latest_date = int(arquivo.readline())
-        arquivo.close()
-
-        latest_message = retorno["result"][-1]
-        message_date = latest_message["message"]["date"]
-
-        if (not message_date > latest_date):
+            continuar = False
             continue
-        else:
-            latest_date = message_date
 
-        print(f"{latest_message}")
+    print()
+    return
 
-        chat_id = latest_message["message"]["chat"]["id"]
-        message_id = latest_message["message"]["message_id"]
-
-        if (latest_message["message"]["text"] == "/start"):
-            message = "Comando recebido"
-        else:
-            message = "Bom dia 🌞"
-
-        dados = {"chat_id": chat_id, "reply_to_message_id": message_id, "text": message}
-        post = requests.post(TELEGRAM_API + "/sendMessage", data=dados)
-
-        arquivo = open("timestamp.txt", "w")
-        arquivo.write(f"{latest_date}\n")
-        arquivo.close()
-
+# Entrando na função main e, em caso de exceção, saindo
 if (__name__ == "__main__"):
     try:
         main()

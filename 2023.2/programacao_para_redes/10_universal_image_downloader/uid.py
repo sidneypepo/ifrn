@@ -31,21 +31,22 @@ def main():
     caminho = endereco[2]
     nome_arquivo = caminho[caminho.rfind('/'):]
 
-    # Se não houver protocolo ou se o protocolo informado for HTTP, o
-    # arquivo tentará ser baixado e salvo, senão, exibe-se um erro
-    if (protocolo == "http://" or protocolo == ''):
-        # Apresentando tentativa de baixar o arquivo e tentando obter
-        # dados do arquivo. Se houverem dados, o arquivo tenta-se ser
-        # salvo, senão, exibe-se um erro
-        print("\nBaixando arquivo...")
-        arquivo = funcoes.obter_arquivo(host, 80, caminho)
-        if (len(arquivo) > 0):
-            print("Salvando arquivo...")
-            funcoes.salvar_arquivo(arquivo, nome_arquivo)
-        else:
-            funcoes.mostrar_erro((len(arquivo) > 0), "Erro: não foi possível baixar o arquivo!")
-    else:
+    # Se houver protocolo e se o protocolo informado não for HTTP,
+    # exibe-se um erro
+    if (protocolo != "http://" and protocolo != ''):
         funcoes.mostrar_erro(False, "Erro: protocolo não suportado/implementado!")
+        return
+
+    # Apresentando tentativa de baixar o arquivo e tentando obter
+    # dados do arquivo. Se não houverem dados, exibe-se um erro
+    print("\nBaixando arquivo...")
+    arquivo = funcoes.obter_arquivo(host, 80, caminho)
+    if (not len(arquivo) > 0):
+        funcoes.mostrar_erro((len(arquivo) > 0), "Erro: não foi possível baixar o arquivo!")
+        return
+
+    print("Salvando arquivo...")
+    funcoes.salvar_arquivo(arquivo, nome_arquivo)
 
     return
 
