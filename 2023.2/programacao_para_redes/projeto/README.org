@@ -1,6 +1,6 @@
 #+title: README
 #+author: Sidney Pedro
-#+date: [2023-12-30 Sat]
+#+date: [2024-01-01 Mon]
 
 * Projeto
 Projeto final da disciplina Programação para Redes
@@ -66,13 +66,13 @@ Fazer uma aplicação cliente/servidor com as seguintes características:
 TCP será utilizado, devido à confiabilidade da entrega de pacotes, fundamental para um adequado comando e controle das máquinas remotas
 
 *** Comandos do C2 (via [[https://t.me/progredes_c2_bot][Telegram - @progredes_c2_bot]])
-| Comando             | Descrição                                                                                 |
-|---------------------+-------------------------------------------------------------------------------------------|
-| ~./c2 -h~           | Exibir ajuda (comandos disponíveis, exemplos, etc.)                                       |
-| ~./c2 -q ID~        | Finaliza o daemon do servidor ou de uma máquina conectada identificada por ID             |
-| ~./c2 -d ID~        | Lista informações de hardware de uma máquinaconectada identificada por ID                 |
-| ~./c2 -p ID~        | Lista programas instalados em uma máquina conectada identificada por ID                   |
-| ~./c2 -b ID~        | Obtem histórico de navegação dos navegadores de uma máquina conectada identificada por ID |
-| ~./c2 -u ID~        | Obtem informações do usuário logado de uma máquina conectada identificada por ID          |
-| ~./c2 -l~           | Lista de máquinas conectadas (ID's, endereços, IP, tempo online, etc.)                    |
-| ~./c2 -s AÇÃO HOST~ | Reservado                                                                                 |
+| Comando             | Descrição                                                                                                |
+|---------------------+----------------------------------------------------------------------------------------------------------|
+| ~./c2 -h~           | Exibir ajuda (comandos disponíveis, exemplos, etc.)                                                      |
+| ~./c2 -q ID~        | Finaliza o daemon do servidor ou de uma máquina conectada identificada por ~ID~ (o ID do servidor é ~0~) |
+| ~./c2 -d ID~        | Lista informações de hardware de uma máquina conectada identificada por ~ID~                             |
+| ~./c2 -p ID~        | Lista programas instalados em uma máquina conectada identificada por ~ID~                                |
+| ~./c2 -b ID~        | Obtem histórico de navegação dos navegadores de uma máquina conectada identificada por ~ID~              |
+| ~./c2 -u ID~        | Obtem informações do usuário logado de uma máquina conectada identificada por ~ID~                       |
+| ~./c2 -l~           | Lista de máquinas conectadas (ID's, endereços, IP, tempo online, etc.)                                   |
+| ~./c2 -s AÇÃO HOST~ | Reservado                                                                                                |

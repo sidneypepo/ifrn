@@ -18,9 +18,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-# Armazenando informações do servidor, de socket e codificação de
-# caracteres
+# Armazenando informações de socket do servidor, tempo entre
+# operações, codificação de caracteres e opções do bot
 SOCKET_SERVIDOR = ("localhost", 50000)
-CONEXOES_MAXIMAS = 1
+TIMEOUT = 10
 TAMANHO_BUFFER = 512
 CHARSET = "utf-8"
+OPCOES = ["-h", "-q", "-d", "-p", "-b", "-u", "-l", "-s"]

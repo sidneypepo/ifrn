@@ -19,13 +19,13 @@
 #
 
 # Importando bibliotecas
-import requests, funcoes, comandos
+from constantes import *
+import funcoes, requests
 
-# Armazenando token do bot (@progredes_c2_bot), endereço da
-# API do Telegram e opções do bot
+# Armazenando token do bot (@progredes_c2_bot) e endereço da API
+# do Telegram
 API_TOKEN = "6415239744:AAFAmiRsi_ZEa5OLuW1jny-pyBmYyu2GYZM"
 TELEGRAM_API = f"https://api.telegram.org/bot{API_TOKEN}"
-OPCOES = ["-h", "-q", "-d", "-p", "-b", "-u", "-l", "-s"]
 
 # Função para salvar a última atualização
 def salvar_update_id(update_id: int):
@@ -82,39 +82,10 @@ def obter_atualizacoes(latest_update_id: int):
     latest_message = retorno["result"][-1]
     return latest_update_id, latest_message
 
-# Função para interpretar mensagem
-def interpretar_mensagem(message: dict):
-    # Lendo ID do chat e da mensagem e montando dicionário de retorno
-    chat_id = message["message"]["chat"]["id"]
-    message_id = message["message"]["message_id"]
-    retorno = {
-        "chat_id": chat_id,
-        "reply_to_message_id": message_id,
-        "parse_mode": "Markdown",
-        "text": ''
-    }
-
-    # Se não há texto na mensagem recebida, retorna-se
-    if (not "text" in message["message"]):
-        return retorno
-
-    # Analisando conteúdo da mensagem recebida e respondendo com sua
-    # ação correspondente
-    message_text = message["message"]["text"]
-    tokens = message_text.split()
-    if (len(tokens) == 1 and (tokens[0] == "/start" or tokens[-1] == "./c2")):
-        retorno["text"] = "./c2 -h"
-    elif (tokens[0] != "./c2"):
-        retorno["text"] = ''
-    elif (tokens[1] in OPCOES):
-        retorno["text"] = message_text
-
-    return retorno
-
 # Função para responder mensagem
 def responder_mensagem(retorno: dict):
     if (retorno["text"] == ''):
-        retorno["text"] = f"""Comando desconhecido!
+        retorno["text"] = f"""Comando desconhecido ou incorreto!
 
 Digite `./c2 -h` para obter a lista de comandos válidos"""
     elif (retorno["text"] == "./c2 -h"):
