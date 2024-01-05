@@ -20,12 +20,7 @@
 
 # Importando bibliotecas
 from constantes import *
-import funcoes, requests
-
-# Armazenando token do bot (@progredes_c2_bot) e endereço da API
-# do Telegram
-API_TOKEN = "6415239744:AAFAmiRsi_ZEa5OLuW1jny-pyBmYyu2GYZM"
-TELEGRAM_API = f"https://api.telegram.org/bot{API_TOKEN}"
+import funcoes, requests, time
 
 # Função para salvar a última atualização
 def salvar_update_id(update_id: int):
@@ -84,11 +79,13 @@ def obter_atualizacoes(latest_update_id: int):
 
 # Função para responder mensagem
 def responder_mensagem(retorno: dict):
-    if (retorno["text"] == ''):
+    mensagem = retorno["text"]
+
+    if (mensagem == ''):
         retorno["text"] = f"""Comando desconhecido ou incorreto!
 
 Digite `./c2 -h` para obter a lista de comandos válidos"""
-    elif (retorno["text"] == "./c2 -h"):
+    elif (mensagem == "./c2 -h"):
         retorno["text"] = f"""Uso: `./c2 [OPÇÃO] [ARGUMENTO]...`
 Comando e Controle (C2) da _botnet_ do Projeto de ProgRedes 2023.2.
 
@@ -112,5 +109,14 @@ Opções:
 Exemplos:
 ` ./c2 -h      ` Pede informações do C2"""
 
-    requests.post(f"{TELEGRAM_API}/sendMessage", data=retorno)
+    if (len(mensagem) < 2048):
+        requests.post(f"{TELEGRAM_API}/sendMessage", data=retorno)
+        return
+
+    while (len(mensagem) > 0):
+        retorno["text"] = f"```text\n{mensagem[:2048]}```"
+        requests.post(f"{TELEGRAM_API}/sendMessage", data=retorno)
+        mensagem = mensagem[2048:]
+        time.sleep(3)
+
     return

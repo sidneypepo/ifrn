@@ -19,11 +19,8 @@
 #
 
 # Importando bibliotecas
-import os, socket
-
-# Armazenando caminho completo do diretório desse programa para
-# funções que leem ou escrevem arquivos
-DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
+from constantes import *
+import os, socket, json, browser_history
 
 # Função para remover um arquivo no diretório local do programa
 def remover_arquivo(nome_arquivo: str):
@@ -61,3 +58,13 @@ def ehinteiro(numero: str):
 
     # Retorna False, casoa string não seja um número inteiro
     return False
+
+# Função para retornar o histórico de navegação de um cliente
+def obter_historico():
+    historico = json.loads(browser_history.get_history().to_json())["history"]
+
+    retorno = ''
+    for index in historico:
+        retorno += index["URL"] + '\n'
+
+    return retorno
