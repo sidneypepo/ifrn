@@ -117,6 +117,9 @@ Exemplos:
         retorno["text"] = f"```text\n{mensagem[:2048]}```"
         requests.post(f"{TELEGRAM_API}/sendMessage", data=retorno)
         mensagem = mensagem[2048:]
-        time.sleep(3)
+        try:
+            time.sleep(3)
+        except:
+            break
 
     return

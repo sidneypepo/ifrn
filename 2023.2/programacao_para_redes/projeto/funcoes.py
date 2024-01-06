@@ -267,7 +267,9 @@ def obter_programas():
 def obter_historico():
     historico = json.loads(browser_history.get_history().to_json())["history"]
 
-    if (len(historico) > 200):
+    if (len(historico) < 1):
+        return "Não há histórico disponível!"
+    elif (len(historico) > 200):
         historico = historico[-200:]
 
     retorno = ''
