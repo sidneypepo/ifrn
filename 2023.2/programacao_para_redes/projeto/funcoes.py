@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ifrn/2023.2/programacao_para_redes/projeto/funcoes.py
-# Copyright (C) 2023  Sidney Pedro
+# Copyright (C) 2023-2024  Sidney Pedro
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,7 +34,10 @@ if (OS == "nt"):
 
 # Função para remover um arquivo no diretório local do programa
 def remover_arquivo(nome_arquivo: str):
-    os.remove(f"{DIRETORIO_ATUAL}/{nome_arquivo}")
+    try:
+        os.remove(f"{DIRETORIO_ATUAL}/{nome_arquivo}")
+    except:
+        return
     return
 
 # Função para testar se uma string é um número natural
@@ -86,8 +89,7 @@ def obter_informacoes():
         retorno += f"{os.cpu_count()}\n"
         retorno += f"{obter_ram() / (1024 * 1024)} MiB\n"
         retorno += os.popen("wmic diskdrive get size | findstr /i /v \"size\"").readlines()[0]
-        so = os.popen("systeminfo | findstr /i /c:\"os name\"").readlines()[0].split(':')[1].strip()
-        retorno += f"{so}\n"
+        retorno += os.popen("wmic os get caption | findstr /i /v \"caption\"").readlines()[0]
         retorno += f"{os.getlogin()}\n"
         retorno += f"{os.path.expanduser('~')}\n"
         retorno += "Informação desconhecida!\n"

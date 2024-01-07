@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ifrn/2023.2/programacao_para_redes/projeto/constantes.py
-# Copyright (C) 2023  Sidney Pedro
+# Copyright (C) 2023-2024  Sidney Pedro
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ DIRETORIO_ATUAL = os.path.dirname(os.path.abspath(__file__))
 API_TOKEN = "6415239744:AAFAmiRsi_ZEa5OLuW1jny-pyBmYyu2GYZM"
 TELEGRAM_API = f"https://api.telegram.org/bot{API_TOKEN}"
 OS = os.name
-SOCKET_SERVIDOR = ("localhost", 50000)
+SOCKET_SERVIDOR = ("0.0.0.0", 50000) # Não esqueça de alterar o 0.0.0.0 para o IP do servidor!
 TIMEOUT = 10
 TAMANHO_BUFFER = 512
 CHARSET = "utf-8"
