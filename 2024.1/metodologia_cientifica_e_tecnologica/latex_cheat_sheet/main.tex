@@ -1,0 +1,299 @@
+\documentclass[a4paper,12pt]{article}
+% \documentclass[a4paper,12pt]{ctexart} % article with unicode chars. should be used with xelatex compiler
+% \documentclass[article]{abntex2} % abnt article format
+% \usepackage[alf]{abntex2cite} % abnt bibliography format
+\usepackage[utf8]{inputenc} % charset
+\usepackage[T1]{fontenc} % basically adds european accented glyphs (font encodings) to pdflatex. more info at https://latexref.xyz/fontenc-package.html
+\usepackage[normalem]{ulem} % adds different underlines and the normalem makes the emphasis stay italicized and not underlined
+\usepackage[brazilian]{babel}
+\usepackage{indentfirst}
+\setlength{\parindent}{1.25cm}
+\usepackage{graphicx}
+\usepackage{xurl}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+\usepackage{lipsum}
+\usepackage{blindtext}
+\usepackage{rotating}
+\usepackage{natbib}
+\usepackage{minted}
+\usemintedstyle{emacs}
+\AtBeginEnvironment{verbatim}{\small}
+
+\title{Cheat Sheet}
+\author{Euzinho da Silva :\}}
+\date{Março de 2024}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    Cheat Sheet
+\end{abstract}
+
+\section{Lorem ipsum}
+Lorem ipsum
+
+\subsection{Lorem ipsum stolen from lipsum}
+\lipsum[1-2]
+
+\subsection{Lorem ipsum stolen from blindtext}
+\blindtext[2]
+
+\subsection{Lorem ipsum with different aligns lol}
+\begin{center}
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Etiam lobortis facilisis sem. Nullam nec mi et neque pharetra sollicitudin. Praesent imperdiet mi nec ante. Donec ullamcorper, felis non sodales commodo, lectus velit ultrices augue, a dignissim nibh lectus placerat pede. Vivamus nunc nunc, molestie ut, ultricies vel, semper in, velit. Ut porttitor. Praesent in sapien.
+\end{center}
+
+\subsubsection{To the right}
+\begin{flushright}
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Duis fringilla tristique neque. Sed interdum libero ut metus. Pellentesque placerat. Nam rutrum augue a leo. Morbi sed elit sit amet ante lobortis sollicitudin. Praesent blandit blandit mauris. Praesent lectus tellus, aliquet aliquam, luctusa, egestas a, turpis. Mauris lacinia lorem sit amet ipsum. Nunc quis urna dictum turpis accumsan semper.
+\end{flushright}
+
+\subsubsection{... and the same, but to the left}
+\begin{flushleft}
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Duis fringilla tristique neque. Sed interdum libero ut metus. Pellentesque placerat. Nam rutrum augue a leo. Morbi sed elit sit amet ante lobortis sollicitudin. Praesent blandit blandit mauris. Praesent lectus tellus, aliquet aliquam, luctusa, egestas a, turpis. Mauris lacinia lorem sit amet ipsum. Nunc quis urna dictum turpis accumsan semper.
+\end{flushleft}
+
+\subsection{Lorem ipsum with some noice emphasis}
+\underline{Lorem ipsum dolor sit amet, consectetuer adipiscing elit.} \textbf{\textit{Etiam lobortis facilisis sem.}} \textsc{Nullam nec mi et neque pharetra sollicitudin.} \textsf{Praesent imperdiet mi nec ante.} \texttt{Donec ullamcorper, felis non sodales commodo,} \textit{\texttt{lectus velit ultrices augue, a dignissim nibh} \\ \texttt{lectus placerat pede.}} \textbf{\textit{Vivamus nunc nunc, molestie ut, \textsc{\underline{ultricies} \underline{vel, semper in, velit.}}}} \textbf{\textit{\textsf{\textsc{\underline{Ut porttitor. }\underline{Praesent in sapien.}}}}} \\
+
+This one looks like a badass citation B)
+
+\begin{flushright}
+\textit{Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Duis fringilla tristique neque. Sed interdum libero ut metus. Pellentesque placerat. Nam rutrum augue a leo. Morbi sed elit sit amet ante lobortis sollicitudin. Praesent blandit blandit mauris. Praesent lectus tellus, aliquet aliquam, luctusa, egestas a, turpis. Mauris lacinia lorem sit amet ipsum. Nunc quis urna dictum turpis accumsan semper.}
+\end{flushright}
+
+\section{Hmm, another nice things}
+Hope u like my Figuras \ref{fig:turtle} and \ref{fig:bigturtle} :)
+
+\begin{figure}[ht]
+    \includegraphics[width=4cm]{taratuga.png}
+    \caption{A turtle hat}
+    \label{fig:turtle}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=5cm]{taratuga.png}
+    \caption{A bigger (and centered) turtle hat}
+    \label{fig:bigturtle}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \begin{minipage}{3.5cm}
+        \centering
+        \includegraphics[width=1.5cm]{taratuga.png} \\
+        Figura \ref{fig:doubleturtle}.1: Left
+    \end{minipage}
+    \begin{minipage}{3.5cm}
+        \centering
+        \includegraphics[width=1.5cm]{taratuga.png} \\
+        Figura \ref{fig:doubleturtle}.2: Right
+    \end{minipage}
+    \caption{Double turtle}
+    \label{fig:doubleturtle}
+\end{figure}
+
+Double turtle on the way CROSS THE Figura \ref{fig:doubleturtle} YEAH YEEAAAAHHHH SO INTENSE >w<
+
+\section*{Numberless section}
+\subsection*{Numberless subsection}
+\subsubsection*{Numberless subsubsection}
+
+\section{Bullets}
+\subsection{Unordered}
+\begin{itemize}
+    \item A item
+    \item Another item
+    \begin{itemize}
+        \item A sub item
+        \item Another sub item
+        \begin{itemize}
+            \item A sub sub item
+            \begin{itemize}
+                \item A sub sub sub item
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+    \item Yet another item
+    \item [] A item with a hidden bullet
+    \item[] Another item with a hidden bullet
+\end{itemize}
+
+\subsection{Ordered}
+\begin{enumerate}
+    \item A item
+    \item Another item
+    \begin{enumerate}
+        \item A sub item
+        \item Another sub item
+        \begin{enumerate}
+            \item A sub sub item
+            \begin{enumerate}
+                \item A sub sub sub item
+            \end{enumerate}
+        \end{enumerate}
+    \end{enumerate}
+    \item Yet another item
+    \item [] A item with a hidden bullet
+    \item[] Another item with a hidden bullet
+\end{enumerate}
+
+\section{Maths in \LaTeX}
+$
+\left( \begin{array}{cc}
+    \dfrac{1}{1} & \frac{2}{1} \\
+    \sqrt[3]{27} & 2^2
+\end{array} \right)
+$
+
+Omg, there is no vertical space here D:
+
+$$
+\left[ \begin{array}{ccc}
+    a & b & c \\
+    d & e & f
+\end{array} \right]
+$$
+
+\begin{equation}
+\left\{ \begin{array}{ccc}
+    a & b \\
+    c & d \\
+    e & f
+\end{array} \right.
+\end{equation}
+
+The inline \LaTeX default: $\lim_{x \rightarrow 0} f(x)$. Cooler way: $\displaystyle \lim_{x\rightarrow0} f(x)$
+
+Right:
+\begin{equation}
+    \lim_{x \rightarrow 0} f(x)
+\end{equation}
+
+Wrong:
+$$\lim_{x \rightarrow 0} f(x)
+
+\lim_{x \rightarrow 0} f(x)
+$$
+
+\vspace{2cm}
+
+Inline default $\int_0^1 f(x) dx$ vs Cooler way $\displaystyle \int_0^1 f(x) dx$
+
+Right:
+$$\int_0^1f(x)dx$$
+
+Also right:
+\begin{equation}
+    \int_0^1 f(x) dx
+\end{equation}
+
+Wrong:
+\begin{equation}
+    \int_0^1 f(x) dx
+
+    \int_0^1 f(x) dx
+\end{equation}
+
+\subsection{Basic Math operators}
+\begin{enumerate}
+    \item $+$
+    \item $-$
+    \item $\cdot$ or $\times$
+    \item $\div$
+\end{enumerate}
+
+\subsection{System Of A \textit{Table}}
+Table? Table! \\ \\
+Table Table Table Table Table \\
+Table Table Table Table Table
+
+Table Table Table Table Table? \\
+Table Table Table Table Table! \\
+You want to!
+
+Table Table Table Table Table Table Table Table Table
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{r|c|l}
+        \hline
+        \textbf{xylophone} & \textit{banana} & \underline{keyboard} \\
+        \hline
+        zebra$^{32}$ & apple & cat \\
+        \hline
+        food & batteries$_{10}$ & chocolate \\
+        guitar & clock & water
+    \end{tabular}
+    \caption{Table Table Table Table Table}
+    \label{tab:table}
+\end{table}
+
+\begin{sidewaystable}
+    Sideways Table \\
+
+        \centering
+        \begin{tabular}{r|c|l}
+            \hline
+            \textbf{xylophone} & \textit{banana} & \underline{keyboard} \\
+            \hline
+            zebra$^{32}$ & apple & cat \\
+            \hline
+            food & batteries$_{10}$ & chocolate \\
+            guitar & clock & water
+        \end{tabular}
+        \caption{Sideways Table Table Table Table Table}
+        \label{tab:sidewaystable}
+\end{sidewaystable}
+
+\begin{wraptable}{l}{4cm}
+    \color{red} Other text, other text, other text, other text. \\
+
+    \color{black}
+    \begin{tabular}{l|l}
+        \LaTeX & Org-Mode \\
+        Good & Also good \\
+    \end{tabular}
+\end{wraptable}
+
+Some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text, some text.
+
+\section{Text sizes}
+Can be used this way
+
+\begin{itemize}
+    \item{normal size (for reference)}
+    \item{\tiny miúdo}
+    \item{\scriptsize muito pequeno}
+    \item{\footnotesize bem pequeno}
+    \item{\small pequeno}
+    \item{\normalsize padrão}
+    \item{\large grande}
+    \item{\Large bem grande}
+    \item{\LARGE muito grande}
+    \item{\huge grandão}
+    \item{\Huge uuuuuii, ele gosta}
+    \item{normal size again (also for reference)}
+\end{itemize}
+
+\begin{quotation}
+    \small \texttt{print("Hello World!")} \\
+
+    \normalsize ... and this way too
+\end{quotation}
+
+\section{Some credits}
+
+Citation nomba onn \cite{dockerb} and nomba too \cite{dockera} and a nice site citation \cite{dockers}.
+
+% \citeauthor{dockerb} % This
+% \citeyear{dockerb} % This
+
+% \bibliographystyle{plainnat} % This
+\bibliographystyle{plain} %
+\bibliography{bibli} % this is be the last section, so should be at the end of document
+\end{document}

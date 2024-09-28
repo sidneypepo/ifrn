@@ -1,0 +1,16 @@
+; projeto.asa zone file
+$TTL 2M
+$ORIGIN projeto.asa.
+@       IN  SOA     projeto.asa. admin.projeto.asa. (
+                202406100   ; Serial
+                2M          ; Refresh
+                5M          ; Retry
+                30M         ; Expire
+                1D)         ; Minimum TTL
+        IN  A       192.168.102.120
+        IN  NS      projeto.asa.
+        IN  MX 10   mail.projeto.asa.
+
+mail    IN  A       192.168.102.120
+ftp     IN  CNAME   @
+www     IN  CNAME   @

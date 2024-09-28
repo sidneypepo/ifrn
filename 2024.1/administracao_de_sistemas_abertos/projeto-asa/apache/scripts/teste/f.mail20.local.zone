@@ -1,0 +1,16 @@
+; f.mail20.local zone file
+$TTL 2M
+$ORIGIN f.mail20.local.
+@       IN  SOA     f.mail20.local. admin.f.mail20.local. (
+                202406100   ; Serial
+                2M          ; Refresh
+                5M          ; Retry
+                30M         ; Expire
+                1D)         ; Minimum TTL
+        IN  A       192.168.102.120
+        IN  NS      f.mail20.local.
+        IN  MX 10   mail.f.mail20.local.
+
+mail    IN  A       192.168.102.120
+ftp     IN  CNAME   @
+www     IN  CNAME   @

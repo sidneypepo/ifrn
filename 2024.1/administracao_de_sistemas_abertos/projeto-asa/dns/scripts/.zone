@@ -1,0 +1,15 @@
+$TTL 30
+$ORIGIN local.
+@	IN	SOA	site1	admin	(
+		2024062200
+		2M
+		1M
+		5M
+		30	)
+
+		IN	A	192.168.102.120
+		IN	NS	site1
+		IN	MX  5	mail.
+
+MAIL		IN	A	192.168.102.120
+ 

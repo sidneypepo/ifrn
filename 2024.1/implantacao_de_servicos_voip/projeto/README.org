@@ -1,0 +1,110 @@
+#+title: README
+#+author: Sidney Pedro
+#+date: [2024-09-28 Sat]
+
+* Projeto
+** Proposta de projeto AGI
+*** Autor
+Sidney Pedro de Jesus Silva Pinto - 20231014050004
+
+*** Descrição
+Meu projeto consiste em uma espécie de agenda de compromissos. Ao ligar para o ramal da agenda, serão apresentadas as opções de listar ou marcar compromissos. A opção de listar de compromissos, se selecionada, permitirá selecionar algum dos compromissos (previamente marcados) para escutar seu lembrete, modificar sua data/hora ou lembrete, ou o remover. A opção de marcar de compromisso, se selecionada, solicitará a data e hora do compromisso e gravará, como recado de voz, seu lembrete a ser reproduzido. Na data e hora especificada em cada compromisso, até três ligações serão realizadas ao usuário que o marcou e, ao atender, o recado de voz gravado será reproduzido, fornecendo, ao final do áudio, a opção de já remover o compromisso da agenda.
+
+*** Linguagem de programação
+Python
+
+** Instruções de instalação
+1. Certifique-se de possuir o Python e o Pip instalados em sua máquina (em sistemas como o Debian, também será necessário instalar o pacote ~python-is-python3~)
+
+2. Instale *para TODO o sistema* as dependências do projeto por meio do seguinte comando executado como super-usuário:
+
+   #+begin_src sh
+pip install -r requirements.txt
+   #+end_src
+
+3. Edite as linhas 21 e 22 do arquivo ~constantes.py~:
+   
+   #+begin_src python
+USUARIO = "agenda" # MUDE-ME
+SENHA = "voip2024.1" # MUDE-ME
+   #+end_src
+
+   para definir credenciais para a /Asterisk Manager Interface/ (AMI). Memorize-as para o passo seguinte:
+
+4. Crie um arquivo ~.conf~ no diretório ~/etc/asterisk/manager.d~ com o seguinte conteúdo:
+
+   #+begin_src conf
+[USUARIO]
+secret=SENHA
+deny=0.0.0.0/0.0.0.0
+permit=127.0.0.1/255.255.255.0
+read=system,call,log,verbose,command,agent,user,originate
+write=system,call,log,verbose,command,agent,user,originate
+   #+end_src
+
+   certificando-se de alterar ~USUARIO~ e ~SENHA~ pelas credenciais configuradas no passo anterior.
+
+   Certifique também de que a diretiva ~#include "manager.d/*.conf"~ está presente em no arquivo ~/etc/asterisk/manager.conf~
+
+5. Edite o arquivo ~/etc/asterisk/extensions.conf~ de modo a incluir *no mesmo contexto dos seus ramais* o seguinte conteúdo:
+
+   #+begin_src conf
+exten => RAMAL,1,Answer()
+same => n,Wait(2)
+same => n,AGI(/CAMINHO/ABSOLUTO/PARA/O/ramal.py)
+   #+end_src
+
+   Lembre-se de substituir ~RAMAL~ por um número de ramal de sua preferência (o qual será utilizado para interagir com o projeto) e ~/CAMINHO/ABSOLUTO/PARA/O~ pelo caminho *ABSOLUTO* do diretório raiz do projeto
+
+6. Edite o arquivo ~/etc/asterisk/sip.conf~ de modo a incluir:
+
+   #+begin_src conf
+language=pt_BR
+tonezone=br
+   #+end_src
+
+   no mesmo contexto dos seus ramais ou no contexto ~general~
+
+7. Recarregue o /Manager/, /Dialplan/ e /SIP/ do Asterisk:
+
+   #+begin_src sh
+asterisk -rx "manager reload"
+asterisk -rx "dialplan reload"
+asterisk -rx "sip reload"
+   #+end_src
+
+   para que as configurações anteriores sejam aplicadas
+
+8. Como super-usuário, altere recursivamente o usuário e grupo donos da raiz do projeto para o usuário e grupo ~asterisk~:
+
+   #+begin_src sh
+chown -R asterisk:asterisk /CAMINHO/ABSOLUTO/PARA/O/PROJETO
+   #+end_src
+
+   para que o Asterisk seja capaz de interagir com os componentes do projeto. Não esqueça de substituir ~/CAMINHO/ABSOLUTO/PARA/O/PROJETO~ no comando anterior pelo caminho absoluto da raiz do projeto
+
+9. Instale o pacote ~https://github.com/marcelsavegnago/issabel_sounds_pt_BR~ seguindo as orientações descritas no repositório. Após isso copie os arquivos de áudios extras para o diretório de instalação do pacote:
+
+   #+begin_src sh
+cp /CAMINHO/ABSOLUTO/PARA/O/projeto/res/extra/audios/*.gsm /usr/share/asterisk/sounds/pt_BR
+   #+end_src
+
+   Lembre-se de substituir ~/CAMINHO/ABSOLUTO/PARA/O~ no comando pelo caminho absoluto até a raiz do projeto
+
+10. Se seu servidor usa o ~systemd~ como /Init System/, edite a linha 9 do arquivo ~ligador.service~:
+
+   #+begin_src conf
+ExecStart=/usr/bin/python /CAMINHO/ABSOLUTO/PARA/O/ligador.py
+   #+end_src
+
+   para substituir ~/CAMINHO/ABSOLUTO/PARA/O~ pelo caminho *ABSOLUTO* do diretório raiz do projeto.
+
+   Por fim, como super-usuário, copie o arquivo ~ligador.service~ para o diretório ~/lib/systemd/system~ e inicie o serviço:
+
+   #+begin_src sh
+cat ligador.service > /lib/systemd/system/ligador.service
+systemctl enable ligador
+service ligador start
+   #+end_src
+
+11. Por fim, teste se o projeto está em funcionamento ligando para o ramal configurado no passo 5

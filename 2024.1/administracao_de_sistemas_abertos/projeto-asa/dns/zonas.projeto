@@ -1,0 +1,32 @@
+$TTL 30
+$ORIGIN domain.
+@      IN      SOA     domain.                root   (
+               2024062600
+               2M
+               1M
+               5M
+               30      )
+
+       IN      A       192.168.102.120
+       IN      NS      @
+       IN      MX  5   mail
+
+www                  IN      CNAME   @
+mail                 IN      A       192.168.102.120
+ftp                  IN      A       192.168.102.120
+$TTL 30
+$ORIGIN projeto.asa.
+@      IN      SOA     projeto.asa.                root   (
+               2024062600
+               2M
+               1M
+               5M
+               30      )
+
+       IN      A       192.168.102.120
+       IN      NS      @
+       IN      MX  5   mail
+
+www                  IN      CNAME   @
+mail                 IN      A       192.168.102.120
+ftp                  IN      A       192.168.102.120

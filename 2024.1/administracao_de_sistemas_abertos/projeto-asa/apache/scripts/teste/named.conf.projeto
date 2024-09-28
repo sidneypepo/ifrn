@@ -1,0 +1,24 @@
+zone "f.mail20.local" IN {
+    type master;
+    file "/var/projeto-asa/apache/scripts/teste/f.mail20.local.zone";
+    allow-query { any; };
+};
+
+zone "mail20.local" IN {
+    type master;
+    file "/var/projeto-asa/apache/scripts/teste/mail20.local.zone";
+    allow-query { any; };
+};
+
+zone "projeto.asa" IN {
+    type master;
+    file "/var/projeto-asa/apache/scripts/teste/projeto.asa.zone";
+    allow-query { any; };
+};
+
+zone "site2.site" IN {
+    type master;
+    file "/var/projeto-asa/apache/scripts/teste/site2.site.zone";
+    allow-query { any; };
+};
+

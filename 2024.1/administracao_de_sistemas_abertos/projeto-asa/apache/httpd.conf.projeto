@@ -1,0 +1,40 @@
+<Directory /var/projeto-asa/dominios>
+    AllowOverride All
+    Require all granted
+</Directory>
+
+<VirtualHost 192.168.102.120:80>
+    <Directory /var/projeto-asa/dominios/mail20.local/www/adm>
+        AuthType Basic
+        AuthName "Login"
+        AuthBasicProvider socache dbd
+        AuthnCacheProvideFor dbd
+        AuthnCacheContext 'mail20.local'
+        Require valid-user
+        AuthDBDUserPWQuery "SELECT senha_apache FROM projeto_users WHERE email = %s AND dominio = 'mail20.local'"
+        Options Indexes
+    </Directory>
+    ServerName www.mail20.local
+    ServerAlias mail20.local
+    DocumentRoot "/var/projeto-asa/dominios/mail20.local/www"
+    ErrorLog "/var/projeto-asa/dominios/mail20.local/logs/error.log"
+    CustomLog "/var/projeto-asa/dominios/mail20.local/logs/access.log" common
+</VirtualHost>
+
+<VirtualHost 192.168.102.120:80>
+    <Directory /var/projeto-asa/dominios/projeto.asa/www/adm>
+        AuthType Basic
+        AuthName "Login"
+        AuthBasicProvider socache dbd
+        AuthnCacheProvideFor dbd
+        AuthnCacheContext 'projeto.asa'
+        Require valid-user
+        AuthDBDUserPWQuery "SELECT senha_apache FROM projeto_users WHERE email = %s AND dominio = 'projeto.asa'"
+        Options Indexes
+    </Directory>
+    ServerName www.projeto.asa
+    ServerAlias projeto.asa
+    DocumentRoot "/var/projeto-asa/dominios/projeto.asa/www"
+    ErrorLog "/var/projeto-asa/dominios/projeto.asa/logs/error.log"
+    CustomLog "/var/projeto-asa/dominios/projeto.asa/logs/access.log" common
+</VirtualHost>

@@ -1,0 +1,12 @@
+[Unit]
+Description=Serviço do ligador da Agenda
+After=network.target
+
+[Service]
+Type=idle
+Restart=on-failure
+User=asterisk
+ExecStart=/usr/bin/python /CAMINHO/ABSOLUTO/PARA/O/ligador.py
+
+[Install]
+WantedBy=multi-user.target

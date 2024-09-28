@@ -1,0 +1,16 @@
+; site2.site zone file
+$TTL 2M
+$ORIGIN site2.site.
+@       IN  SOA     site2.site. admin.site2.site. (
+                202406100   ; Serial
+                2M          ; Refresh
+                5M          ; Retry
+                30M         ; Expire
+                1D)         ; Minimum TTL
+        IN  A       192.168.102.120
+        IN  NS      site2.site.
+        IN  MX 10   mail.site2.site.
+
+mail    IN  A       192.168.102.120
+ftp     IN  CNAME   @
+www     IN  CNAME   @

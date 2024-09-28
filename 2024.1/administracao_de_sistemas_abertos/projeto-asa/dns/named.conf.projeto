@@ -1,0 +1,10 @@
+zone "domain" IN {
+       type master;
+       file "/var/projeto-asa/dns/zonas.projeto";
+       allow-query { any; };
+};
+zone "projeto.asa" IN {
+       type master;
+       file "/var/projeto-asa/dns/zonas.projeto";
+       allow-query { any; };
+};
