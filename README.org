@@ -1,10 +1,9 @@
 #+title: README
 #+author: Sidney Pedro
-#+date: [2023-09-13 Wed]
 
 #+begin_center
 #+html: <p align="center"><img src="res/ifrn_logo.png" alt="IFRN logo" height="150"></p>
 #+end_center
 
 * IFRN
-Exercises and activities from my path in IFRN's Computer Networks Course.
+Exercises and activities from my study path at IFRN's Computer Networks Course.
