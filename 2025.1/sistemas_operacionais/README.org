@@ -1,0 +1,13 @@
+#+title: README
+#+author: Sidney Pedro
+#+date: [2025-08-13 Wed]
+
+* Projeto
+** Grupo
+- [[https://github.com/MeloAnaa][Ana Clara Melo de Araujo]];
+
+- [[https://github.com/GABRIELalmeida0][Gabriel Almeida Dos Santos]];
+
+- [[https://github.com/sidneypepo][Sidney Pedro de Jesus Silva Pinto]]; e
+
+** Descrição
